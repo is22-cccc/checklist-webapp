@@ -86,7 +86,7 @@
 
     const formData = {};
 
-    // Шаг 1 → Блок 1
+    // Переход с Шага 1 на Блок 1
     document.getElementById('step1_next').addEventListener('click', () => {
       formData.block      = document.getElementById('block_select').value;
       formData.patient_id = document.getElementById('patient_id').value;
@@ -98,13 +98,13 @@
       }
     });
 
-    // Назад к исходным данным
+    // Кнопка Назад
     document.getElementById('step1_back').addEventListener('click', () => {
       document.getElementById('block1_form').classList.add('hidden');
       document.getElementById('step1').classList.remove('hidden');
     });
 
-    // Расчёт IJV
+    // Расчет процентов IJV
     function updateVenRatio() {
       const max = parseFloat(ven_max.value), min = parseFloat(ven_min.value);
       if (!isNaN(max) && !isNaN(min)) {
@@ -118,7 +118,7 @@
     ven_max.addEventListener('input', updateVenRatio);
     ven_min.addEventListener('input', updateVenRatio);
 
-    // Расчёт CCA
+    // Расчет процентов CCA
     function updateCarRatio() {
       const max = parseFloat(car_max.value), min = parseFloat(car_min.value);
       if (!isNaN(max) && !isNaN(min)) {
@@ -132,7 +132,7 @@
     car_max.addEventListener('input', updateCarRatio);
     car_min.addEventListener('input', updateCarRatio);
 
-    // Расчёт скорректированного времени
+    // Расчет скорректированного времени потока
     function updateTimeCorrected() {
       const time = parseFloat(flow_time.value),
             hr   = parseInt(heart_rate.value, 10);
@@ -149,7 +149,7 @@
     flow_time.addEventListener('input', updateTimeCorrected);
     heart_rate.addEventListener('input', updateTimeCorrected);
 
-    // Отправка и закрытие WebApp
+    // Отправка данных и закрытие WebApp
     document.getElementById('submit_button').addEventListener('click', () => {
       formData.b1_ven_error   = ven_error.checked;
       formData.b1_car_error   = car_error.checked;
