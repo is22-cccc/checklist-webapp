@@ -1,3 +1,6 @@
+Вот полный обновлённый `index.html`. Скопируй и перезапиши им свой файл:
+
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -73,7 +76,7 @@
   <script>
     const webApp = Telegram.WebApp;
     webApp.ready();
-    // Отладочный алерт при старте WebApp
+    // Алёрт при старте, чтобы убедиться, что WebApp запускается в Telegram
     alert("🔧 DEBUG: WebApp запущен внутри Telegram");
 
     const formData = {};
@@ -98,8 +101,8 @@
       if (!isNaN(max) && !isNaN(min)) {
         const ratio = (max - min) / ((max + min) / 2) * 100;
         ven_ratio_result.textContent = ratio.toFixed(1) + '% точка отсечения 18%';
-        formData.b1_ven_max   = max;
-        formData.b1_ven_min   = min;
+        formData.b1_ven_max = max;
+        formData.b1_ven_min = min;
         formData.b1_ven_ratio = ratio;
       }
     }
@@ -111,8 +114,8 @@
       if (!isNaN(max) && !isNaN(min)) {
         const ratio = (max - min) / ((max + min) / 2) * 100;
         car_ratio_result.textContent = ratio.toFixed(1) + '% точка отсечения 12%';
-        formData.b1_car_max   = max;
-        formData.b1_car_min   = min;
+        formData.b1_car_max = max;
+        formData.b1_car_min = min;
         formData.b1_car_ratio = ratio;
       }
     }
@@ -127,8 +130,8 @@
         const threshold = formData.age < 65 ? 325 : 340;
         time_corrected_result.textContent =
           corrected.toFixed(1) + ' мс точка отсечения ' + threshold + ' мс';
-        formData.b1_time           = time;
-        formData.b1_hr             = hr;
+        formData.b1_time = time;
+        formData.b1_hr = hr;
         formData.b1_time_corrected = corrected;
       }
     }
@@ -136,15 +139,27 @@
     heart_rate.addEventListener('input', updateTimeCorrected);
 
     document.getElementById('submit_button').addEventListener('click', () => {
-      formData.b1_ven_error   = ven_error.checked;
-      formData.b1_car_error   = car_error.checked;
-      formData.b1_time_error  = time_error.checked;
-      formData.telegram_id    = webApp.initDataUnsafe.user.id;
-      // Отладочный алерт при отправке
-      alert("🔧 DEBUG: отправляем formData\\n" + JSON.stringify(formData));
+      // Валидация
+      if (!formData.patient_id)            { alert("Введите ID пациента"); return; }
+      if (isNaN(formData.age))             { alert("Введите возраст пациента"); return; }
+      if (formData.b1_ven_max === undefined) { alert("Заполните Max для яремной вены"); return; }
+      if (formData.b1_ven_min === undefined) { alert("Заполните Min для яремной вены"); return; }
+      if (formData.b1_car_max === undefined) { alert("Заполните Max для сонной артерии"); return; }
+      if (formData.b1_car_min === undefined) { alert("Заполните Min для сонной артерии"); return; }
+      if (formData.b1_time === undefined)   { alert("Заполните время потока"); return; }
+      if (formData.b1_hr === undefined)     { alert("Заполните ЧСС"); return; }
+
+      formData.b1_ven_error  = ven_error.checked;
+      formData.b1_car_error  = car_error.checked;
+      formData.b1_time_error = time_error.checked;
+      formData.telegram_id   = webApp.initDataUnsafe.user.id;
+
+      alert("🔧 DEBUG: отправляем formData\n" + JSON.stringify(formData));
       webApp.sendData(JSON.stringify(formData));
-      // webApp.close(); (временно отключено)
+      // Закрываем после отладки:
+      // webApp.close();
     });
   </script>
 </body>
 </html>
+```
