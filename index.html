@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -94,6 +93,16 @@
       formData.patient_id = document.getElementById('patient_id').value.trim();
       formData.age        = parseInt(document.getElementById('patient_age').value, 10);
 
+      // Проверка заполнения
+      if (!formData.patient_id) {
+        alert("Введите номер ИБ пациента");
+        return;
+      }
+      if (isNaN(formData.age)) {
+        alert("Введите возраст пациента");
+        return;
+      }
+
       document.getElementById('step1').classList.add('hidden');
       if (formData.block === '1') {
         document.getElementById('block1_form').classList.remove('hidden');
@@ -153,37 +162,30 @@
 
     // Отправка данных на Apps Script и закрытие
     document.getElementById('submit_button').addEventListener('click', async () => {
-      // Валидация
-      if (!formData.patient_id)            { webApp.showSnackBar("Введите ID пациента");    return; }
-      if (isNaN(formData.age))             { webApp.showSnackBar("Введите возраст");       return; }
-      if (formData.b1_ven_max   == null)   { webApp.showSnackBar("Заполните Max яремной вены");  return; }
-      if (formData.b1_ven_min   == null)   { webApp.showSnackBar("Заполните Min яремной вены");  return; }
-      if (formData.b1_car_max   == null)   { webApp.showSnackBar("Заполните Max сонной артерии");return; }
-      if (formData.b1_car_min   == null)   { webApp.showSnackBar("Заполните Min сонной артерии");return; }
-      if (formData.b1_time      == null)   { webApp.showSnackBar("Заполните время потока"); return; }
-      if (formData.b1_hr        == null)   { webApp.showSnackBar("Заполните ЧСС");          return; }
-
-      formData.b1_ven_error  = ven_error.checked;
-      formData.b1_car_error  = car_error.checked;
-      formData.b1_time_error = time_error.checked;
-      formData.telegram_id   = webApp.initDataUnsafe.user.id;
-
-      try {
-        await fetch(WEBHOOK_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-        webApp.showSnackBar("✔️ Данные сохранены в таблицу");
-      } catch (e) {
-        console.error("Fetch error:", e);
-        webApp.showSnackBar("❌ Ошибка сохранения, попробуйте ещё раз");
-        return;
+      // Валидация блока 1
+      if (formData.b1_ven_max == null || formData.b1_ven_min == null) {
+        alert("Заполните Max и Min внутренней яремной вены"); return;
       }
+      if (formData.b1_car_max == null || formData.b1_car_min == null) {
+        alert("Заполните Max и Min общей сонной артерии"); return;
+      }
+      if (formData.b1_time == null || formData.b1_hr == null) {
+        alert("Заполните время потока и ЧСС"); return;
+      }
+
+      // Добавляем Telegram ID
+      formData.telegram_id = webApp.initDataUnsafe.user.id;
+
+      // Формируем URL с данными
+      const url = WEBHOOK_URL + '?data=' + encodeURIComponent(JSON.stringify(formData));
+
+      // Отправляем GET
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+
+      // Обратная связь и закрытие
+      alert("✔️ Данные сохранены в таблицу");
       webApp.close();
     });
   </script>
 </body>
 </html>
-```
