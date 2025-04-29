@@ -1,12 +1,10 @@
-Вот полный обновлённый `index.html`. Скопируй и перезапиши им свой файл:
-
 ```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Чек-лист УЗ-мониторинга (отладочный)</title>
+  <title>Чек-лист УЗ-мониторинга</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
@@ -27,6 +25,7 @@
   </style>
 </head>
 <body>
+  <!-- Шаг 1: Исходные данные -->
   <div id="step1" class="section">
     <h2>Исходные данные</h2>
     <label for="block_select">Выберите блок:</label>
@@ -36,15 +35,21 @@
       <option value="3">Блок 3</option>
       <option value="4">Блок 4</option>
     </select>
+
     <label for="patient_id">Номер ИБ (ID пациента):</label>
     <input type="text" id="patient_id" placeholder="ID пациента">
+
     <label for="patient_age">Возраст пациента:</label>
     <input type="number" id="patient_age" placeholder="Лет">
+
     <button type="button" id="step1_next">Далее</button>
   </div>
 
+  <!-- Шаг 2: Блок 1 -->
   <div id="block1_form" class="section hidden">
     <h2>Блок 1: Вена и артерия</h2>
+
+    <!-- IJV -->
     <h3>Вариабельность диаметра внутренней яремной вены при дыхании</h3>
     <label for="ven_max">Max (мм):</label>
     <input type="number" id="ven_max" step="0.1">
@@ -53,6 +58,7 @@
     <p id="ven_ratio_result" class="result"></p>
     <label><input type="checkbox" id="ven_error"> Технические погрешности</label>
 
+    <!-- CCA -->
     <h3>Вариабельность диаметра общей сонной артерии при дыхании</h3>
     <label for="car_max">Max (мм):</label>
     <input type="number" id="car_max" step="0.1">
@@ -61,6 +67,7 @@
     <p id="car_ratio_result" class="result"></p>
     <label><input type="checkbox" id="car_error"> Технические погрешности</label>
 
+    <!-- Flow time -->
     <h3>Корректированное время потока на общей сонной артерии</h3>
     <label for="flow_time">Время (мс):</label>
     <input type="number" id="flow_time" step="0.1">
@@ -69,6 +76,7 @@
     <p id="time_corrected_result" class="result"></p>
     <label><input type="checkbox" id="time_error"> Технические погрешности</label>
 
+    <!-- Навигация -->
     <button type="button" class="secondary" id="step1_back">Назад</button>
     <button type="button" id="submit_button">Завершить</button>
   </div>
@@ -76,52 +84,57 @@
   <script>
     const webApp = Telegram.WebApp;
     webApp.ready();
-    // Алёрт при старте, чтобы убедиться, что WebApp запускается в Telegram
-    alert("🔧 DEBUG: WebApp запущен внутри Telegram");
 
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzscbbO6KVE89AQvE7YOU364vKxilhqL7ny9zlpr2JpEpTA75083mIw30UrsSzCEW0I/exec";
     const formData = {};
 
+    // Переход с Шага 1 на Блок 1
     document.getElementById('step1_next').addEventListener('click', () => {
       formData.block      = document.getElementById('block_select').value;
-      formData.patient_id = document.getElementById('patient_id').value;
+      formData.patient_id = document.getElementById('patient_id').value.trim();
       formData.age        = parseInt(document.getElementById('patient_age').value, 10);
+
       document.getElementById('step1').classList.add('hidden');
       if (formData.block === '1') {
         document.getElementById('block1_form').classList.remove('hidden');
       }
     });
 
+    // Кнопка «Назад»
     document.getElementById('step1_back').addEventListener('click', () => {
       document.getElementById('block1_form').classList.add('hidden');
       document.getElementById('step1').classList.remove('hidden');
     });
 
+    // Расчёт IJV
     function updateVenRatio() {
       const max = parseFloat(ven_max.value), min = parseFloat(ven_min.value);
       if (!isNaN(max) && !isNaN(min)) {
         const ratio = (max - min) / ((max + min) / 2) * 100;
         ven_ratio_result.textContent = ratio.toFixed(1) + '% точка отсечения 18%';
-        formData.b1_ven_max = max;
-        formData.b1_ven_min = min;
+        formData.b1_ven_max   = max;
+        formData.b1_ven_min   = min;
         formData.b1_ven_ratio = ratio;
       }
     }
     ven_max.addEventListener('input', updateVenRatio);
     ven_min.addEventListener('input', updateVenRatio);
 
+    // Расчёт CCA
     function updateCarRatio() {
       const max = parseFloat(car_max.value), min = parseFloat(car_min.value);
       if (!isNaN(max) && !isNaN(min)) {
         const ratio = (max - min) / ((max + min) / 2) * 100;
         car_ratio_result.textContent = ratio.toFixed(1) + '% точка отсечения 12%';
-        formData.b1_car_max = max;
-        formData.b1_car_min = min;
+        formData.b1_car_max   = max;
+        formData.b1_car_min   = min;
         formData.b1_car_ratio = ratio;
       }
     }
     car_max.addEventListener('input', updateCarRatio);
     car_min.addEventListener('input', updateCarRatio);
 
+    // Расчёт скорректированного времени
     function updateTimeCorrected() {
       const time = parseFloat(flow_time.value),
             hr   = parseInt(heart_rate.value, 10);
@@ -130,34 +143,45 @@
         const threshold = formData.age < 65 ? 325 : 340;
         time_corrected_result.textContent =
           corrected.toFixed(1) + ' мс точка отсечения ' + threshold + ' мс';
-        formData.b1_time = time;
-        formData.b1_hr = hr;
+        formData.b1_time           = time;
+        formData.b1_hr             = hr;
         formData.b1_time_corrected = corrected;
       }
     }
     flow_time.addEventListener('input', updateTimeCorrected);
     heart_rate.addEventListener('input', updateTimeCorrected);
 
-    document.getElementById('submit_button').addEventListener('click', () => {
+    // Отправка данных на Apps Script и закрытие
+    document.getElementById('submit_button').addEventListener('click', async () => {
       // Валидация
-      if (!formData.patient_id)            { alert("Введите ID пациента"); return; }
-      if (isNaN(formData.age))             { alert("Введите возраст пациента"); return; }
-      if (formData.b1_ven_max === undefined) { alert("Заполните Max для яремной вены"); return; }
-      if (formData.b1_ven_min === undefined) { alert("Заполните Min для яремной вены"); return; }
-      if (formData.b1_car_max === undefined) { alert("Заполните Max для сонной артерии"); return; }
-      if (formData.b1_car_min === undefined) { alert("Заполните Min для сонной артерии"); return; }
-      if (formData.b1_time === undefined)   { alert("Заполните время потока"); return; }
-      if (formData.b1_hr === undefined)     { alert("Заполните ЧСС"); return; }
+      if (!formData.patient_id)            { webApp.showSnackBar("Введите ID пациента");    return; }
+      if (isNaN(formData.age))             { webApp.showSnackBar("Введите возраст");       return; }
+      if (formData.b1_ven_max   == null)   { webApp.showSnackBar("Заполните Max яремной вены");  return; }
+      if (formData.b1_ven_min   == null)   { webApp.showSnackBar("Заполните Min яремной вены");  return; }
+      if (formData.b1_car_max   == null)   { webApp.showSnackBar("Заполните Max сонной артерии");return; }
+      if (formData.b1_car_min   == null)   { webApp.showSnackBar("Заполните Min сонной артерии");return; }
+      if (formData.b1_time      == null)   { webApp.showSnackBar("Заполните время потока"); return; }
+      if (formData.b1_hr        == null)   { webApp.showSnackBar("Заполните ЧСС");          return; }
 
       formData.b1_ven_error  = ven_error.checked;
       formData.b1_car_error  = car_error.checked;
       formData.b1_time_error = time_error.checked;
       formData.telegram_id   = webApp.initDataUnsafe.user.id;
 
-      alert("🔧 DEBUG: отправляем formData\n" + JSON.stringify(formData));
-      webApp.sendData(JSON.stringify(formData));
-      // Закрываем после отладки:
-      // webApp.close();
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+        webApp.showSnackBar("✔️ Данные сохранены в таблицу");
+      } catch (e) {
+        console.error("Fetch error:", e);
+        webApp.showSnackBar("❌ Ошибка сохранения, попробуйте ещё раз");
+        return;
+      }
+      webApp.close();
     });
   </script>
 </body>
