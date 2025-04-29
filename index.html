@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Чек-лист УЗ-мониторинга</title>
+  <title>Чек-лист УЗ-мониторинга (временная отладка)</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
@@ -149,15 +149,17 @@
     flow_time.addEventListener('input', updateTimeCorrected);
     heart_rate.addEventListener('input', updateTimeCorrected);
 
-    // Отправка данных и закрытие WebApp
+    // Отправка данных (временная отладка: без закрытия)
     document.getElementById('submit_button').addEventListener('click', () => {
       formData.b1_ven_error   = ven_error.checked;
       formData.b1_car_error   = car_error.checked;
       formData.b1_time_error  = time_error.checked;
       formData.telegram_id    = webApp.initDataUnsafe.user.id;
 
+      console.log(">> CLIENT DEBUG: отправляем formData", formData);
       webApp.sendData(JSON.stringify(formData));
-      webApp.close();
+      // Временно не закрываем форму:
+      // webApp.close();
     });
   </script>
 </body>
