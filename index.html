@@ -41,7 +41,7 @@
     <label for="patient_age">Возраст пациента:</label>
     <input type="number" id="patient_age" placeholder="Лет">
 
-    <button id="step1_next">Далее</button>
+    <button type="button" id="step1_next">Далее</button>
   </div>
 
   <!-- Шаг 2: Блок 1 -->
@@ -76,31 +76,29 @@
     <label><input type="checkbox" id="time_error"> Технические погрешности</label>
 
     <!-- Навигация -->
-    <button class="secondary" id="step1_back">Назад</button>
-    <button id="submit_button">Завершить</button>
+    <button type="button" class="secondary" id="step1_back">Назад</button>
+    <button type="button" id="submit_button">Завершить</button>
   </div>
 
   <script>
     const webApp = Telegram.WebApp;
     webApp.ready();
 
-    // Временное хранилище ответов
     const formData = {};
 
-    // Переход к блоку 1
+    // Шаг 1 → Блок 1
     document.getElementById('step1_next').addEventListener('click', () => {
-      formData.block       = document.getElementById('block_select').value;
-      formData.patient_id  = document.getElementById('patient_id').value;
-      formData.age         = parseInt(document.getElementById('patient_age').value, 10);
+      formData.block      = document.getElementById('block_select').value;
+      formData.patient_id = document.getElementById('patient_id').value;
+      formData.age        = parseInt(document.getElementById('patient_age').value, 10);
 
       document.getElementById('step1').classList.add('hidden');
-      // пока реализован только Блок 1
       if (formData.block === '1') {
         document.getElementById('block1_form').classList.remove('hidden');
       }
     });
 
-    // Кнопка «Назад»
+    // Назад к исходным данным
     document.getElementById('step1_back').addEventListener('click', () => {
       document.getElementById('block1_form').classList.add('hidden');
       document.getElementById('step1').classList.remove('hidden');
@@ -139,8 +137,8 @@
       const time = parseFloat(flow_time.value),
             hr   = parseInt(heart_rate.value, 10);
       if (!isNaN(time) && !isNaN(hr)) {
-        const corrected  = time + 1.3 * (hr - 60);
-        const threshold  = formData.age < 65 ? 325 : 340;
+        const corrected = time + 1.3 * (hr - 60);
+        const threshold = formData.age < 65 ? 325 : 340;
         time_corrected_result.textContent =
           corrected.toFixed(1) + ' мс точка отсечения ' + threshold + ' мс';
         formData.b1_time           = time;
@@ -151,13 +149,15 @@
     flow_time.addEventListener('input', updateTimeCorrected);
     heart_rate.addEventListener('input', updateTimeCorrected);
 
-    // Отправка данных в бота
+    // Отправка и закрытие WebApp
     document.getElementById('submit_button').addEventListener('click', () => {
-      formData.b1_ven_error  = ven_error.checked;
-      formData.b1_car_error  = car_error.checked;
-      formData.b1_time_error = time_error.checked;
-      formData.telegram_id   = webApp.initDataUnsafe.user.id;
+      formData.b1_ven_error   = ven_error.checked;
+      formData.b1_car_error   = car_error.checked;
+      formData.b1_time_error  = time_error.checked;
+      formData.telegram_id    = webApp.initDataUnsafe.user.id;
+
       webApp.sendData(JSON.stringify(formData));
+      webApp.close();
     });
   </script>
 </body>
