@@ -60,7 +60,7 @@
       <option value="4">Блок 4</option>
     </select>
 
-    <label for="patient_id">Номер ИБ (ID пациента):</label>
+    <label for="patient_id">Номер И/Б (ID пациента):</label>
     <input type="text" id="patient_id" placeholder="ID пациента">
 
     <label for="patient_age">Возраст пациента:</label>
@@ -141,7 +141,7 @@
       formData.patient_id = document.getElementById('patient_id').value.trim();
       formData.age        = parseInt(document.getElementById('patient_age').value, 10);
 
-      if (!formData.patient_id) { alert("Введите номер ИБ пациента"); return; }
+      if (!formData.patient_id) { alert("Введите номер И/Б пациента"); return; }
       if (isNaN(formData.age))   { alert("Введите возраст пациента");       return; }
 
       document.getElementById('step1').classList.add('hidden');
@@ -214,7 +214,7 @@
       }
       if (typeof formData.b1_car_max === 'undefined' ||
           typeof formData.b1_car_min === 'undefined') {
-        alert("Заполните Max и Min общей сонной артерии");
+        alert("Заполните Max и Min на общей сонной артерии");
         return;
       }
       if (typeof formData.b1_time === 'undefined' ||
