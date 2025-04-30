@@ -114,7 +114,7 @@
 
     let timerInterval, startTime;
 
-    // Увеличиваем padding-bottom при фокусе, чтобы не перекрывала клавиатура
+    // Скролл поля в центр при фокусе
     document.querySelectorAll('input, select').forEach(el => {
       el.addEventListener('focus', () => el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
     });
@@ -126,8 +126,7 @@
     }
     function stopTimer() {
       clearInterval(timerInterval);
-      const totalSec = Math.floor((Date.now() - startTime) / 1000);
-      formData.total_time = totalSec;  // в секундах
+      formData.total_time = Math.floor((Date.now() - startTime) / 1000);
     }
     function updateTimer() {
       const elapsed = Math.floor((Date.now() - startTime) / 1000);
@@ -136,7 +135,7 @@
       document.getElementById('timer').textContent = `${m}:${s}`;
     }
 
-    // Переход с Шага 1 на Блок 1
+    // Шаг 1 → Шаг 2
     document.getElementById('step1_next').addEventListener('click', () => {
       formData.block      = document.getElementById('block_select').value;
       formData.patient_id = document.getElementById('patient_id').value.trim();
@@ -150,7 +149,6 @@
       startTimer();
     });
 
-    // Кнопка «Назад»
     document.getElementById('step1_back').addEventListener('click', () => {
       document.getElementById('block1_form').classList.add('hidden');
       document.getElementById('step1').classList.remove('hidden');
@@ -158,22 +156,72 @@
       document.getElementById('timer').classList.add('hidden');
     });
 
-    // Расчёты (IJV, CCA, Time) — без изменений…
-    function updateVenRatio() { /* как раньше */ }
-    function updateCarRatio() { /* как раньше */ }
-    function updateTimeCorrected() { /* как раньше */ }
-    ven_max.addEventListener('input', updateVenRatio);
-    ven_min.addEventListener('input', updateVenRatio);
-    car_max.addEventListener('input', updateCarRatio);
-    car_min.addEventListener('input', updateCarRatio);
-    flow_time.addEventListener('input', updateTimeCorrected);
-    heart_rate.addEventListener('input', updateTimeCorrected);
+    // ===== IJV =====
+    function updateVenRatio() {
+      const max = parseFloat(document.getElementById('ven_max').value);
+      const min = parseFloat(document.getElementById('ven_min').value);
+      if (!isNaN(max) && !isNaN(min)) {
+        const ratio = (max - min) / ((max + min) / 2) * 100;
+        document.getElementById('ven_ratio_result')
+          .textContent = ratio.toFixed(1) + '% точка отсечения 18%';
+        formData.b1_ven_max   = max;
+        formData.b1_ven_min   = min;
+        formData.b1_ven_ratio = ratio;
+      }
+    }
+    document.getElementById('ven_max').addEventListener('input', updateVenRatio);
+    document.getElementById('ven_min').addEventListener('input', updateVenRatio);
 
-    // Отправка и остановка таймера
+    // ===== CCA =====
+    function updateCarRatio() {
+      const max = parseFloat(document.getElementById('car_max').value);
+      const min = parseFloat(document.getElementById('car_min').value);
+      if (!isNaN(max) && !isNaN(min)) {
+        const ratio = (max - min) / ((max + min) / 2) * 100;
+        document.getElementById('car_ratio_result')
+          .textContent = ratio.toFixed(1) + '% точка отсечения 12%';
+        formData.b1_car_max   = max;
+        formData.b1_car_min   = min;
+        formData.b1_car_ratio = ratio;
+      }
+    }
+    document.getElementById('car_max').addEventListener('input', updateCarRatio);
+    document.getElementById('car_min').addEventListener('input', updateCarRatio);
+
+    // ===== Time =====
+    function updateTimeCorrected() {
+      const time = parseFloat(document.getElementById('flow_time').value);
+      const hr   = parseInt(document.getElementById('heart_rate').value, 10);
+      if (!isNaN(time) && !isNaN(hr)) {
+        const corrected = time + 1.3 * (hr - 60);
+        const threshold = formData.age < 65 ? 325 : 340;
+        document.getElementById('time_corrected_result')
+          .textContent = corrected.toFixed(1) + ' мс точка отсечения ' + threshold + ' мс';
+        formData.b1_time           = time;
+        formData.b1_hr             = hr;
+        formData.b1_time_corrected = corrected;
+      }
+    }
+    document.getElementById('flow_time').addEventListener('input', updateTimeCorrected);
+    document.getElementById('heart_rate').addEventListener('input', updateTimeCorrected);
+
+    // ===== Отправка =====
     document.getElementById('submit_button').addEventListener('click', async () => {
-      if (formData.b1_ven_max == null || formData.b1_ven_min == null) { alert("Заполните Max и Min внутренней яремной вены"); return; }
-      if (formData.b1_car_max == null || formData.b1_car_min == null) { alert("Заполните Max и Min общей сонной артерии"); return; }
-      if (formData.b1_time == null || formData.b1_hr == null)       { alert("Заполните время потока и ЧСС"); return; }
+      if (typeof formData.b1_ven_max === 'undefined' ||
+          typeof formData.b1_ven_min === 'undefined') {
+        alert("Заполните Max и Min внутренней яремной вены");
+        return;
+      }
+      if (typeof formData.b1_car_max === 'undefined' ||
+          typeof formData.b1_car_min === 'undefined') {
+        alert("Заполните Max и Min общей сонной артерии");
+        return;
+      }
+      if (typeof formData.b1_time === 'undefined' ||
+          typeof formData.b1_hr   === 'undefined') {
+        alert("Заполните время потока и ЧСС");
+        return;
+      }
 
       stopTimer();
       formData.telegram_id = webApp.initDataUnsafe.user.id;
