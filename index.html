@@ -185,19 +185,7 @@
       });
     });
 
-    // Далее → нужная форма
-    document.getElementById('step1_next').addEventListener('click', () => {
-      formData.block      = document.getElementById('block_select').value;
-      formData.patient_id = document.getElementById('patient_id').value.trim();
-      formData.age        = parseInt(document.getElementById('patient_age').value, 10);
-
-      if (!formData.patient_id) { alert("Введите номер И/Б пациента"); return; }
-      if (isNaN(formData.age))   { alert("Введите возраст пациента");       return; }
-
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('form' + formData.block).classList.remove('hidden');
-      startTimer();
-    });
+   
 
     // IJV, CCA и Flow ratio (как было)
     function updateVenRatio() {
