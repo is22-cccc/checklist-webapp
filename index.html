@@ -210,145 +210,153 @@
     <button class="submit" data-block="6">Завершить</button>
   </div>
 
-  <script>
-    const webApp = Telegram.WebApp; webApp.ready();
+ <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const webApp = Telegram.WebApp;
+    webApp.ready();
+
     const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbzfl5Ppyupn82FOZRPlgxgZ0XvC9OV8BQxapAumrWtkh7Bxi7IBVmfEiseXahgQVjmM/exec';
     const formData = {};
     let timerInterval, startTime;
 
-    // скролл в центр
-    document.querySelectorAll('input,select').forEach(i=>
-      i.addEventListener('focus',()=>i.scrollIntoView({behavior:'smooth',block:'center'}))
-    );
-
-    function startTimer(){
+    // Таймер
+    function startTimer() {
       startTime = Date.now();
       document.getElementById('timer').classList.remove('hidden');
-      timerInterval = setInterval(()=>{
-        const sec = Math.floor((Date.now()-startTime)/1000),
-              m = String(Math.floor(sec/60)).padStart(2,'0'),
-              s = String(sec%60).padStart(2,'0');
+      timerInterval = setInterval(() => {
+        const sec = Math.floor((Date.now() - startTime) / 1000),
+              m = String(Math.floor(sec / 60)).padStart(2,'0'),
+              s = String(sec % 60).padStart(2,'0');
         document.getElementById('timer').textContent = `${m}:${s}`;
-      },1000);
+      }, 1000);
     }
-    function stopTimer(){
+    function stopTimer() {
       clearInterval(timerInterval);
-      formData.total_time = Math.floor((Date.now()-startTime)/1000);
+      formData.total_time = Math.floor((Date.now() - startTime) / 1000);
     }
 
-    // переключение шагов
-    document.getElementById('next1').onclick = ()=>{
-      formData.block = document.getElementById('block_select').value;
+    // Шаг 1 → форма
+    document.getElementById('next1').addEventListener('click', () => {
+      formData.block      = document.getElementById('block_select').value;
       formData.patient_id = document.getElementById('patient_id').value.trim();
-      formData.age = parseInt(document.getElementById('patient_age').value,10);
-      if(!formData.patient_id||isNaN(formData.age)){alert('Заполните ID и возраст');return;}
+      formData.age        = parseInt(document.getElementById('patient_age').value, 10);
+      if (!formData.patient_id || isNaN(formData.age)) {
+        alert('Заполните все поля');
+        return;
+      }
       document.getElementById('step1').classList.add('hidden');
-      document.getElementById('form'+formData.block).classList.remove('hidden');
+      document.getElementById('form' + formData.block).classList.remove('hidden');
       startTimer();
-    };
-    document.querySelectorAll('.back').forEach(b=>{
-      b.onclick = ()=>{
-        const x=b.dataset.from;
-        document.getElementById('form'+x).classList.add('hidden');
+    });
+
+    // Кнопки Назад
+    document.querySelectorAll('.back').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const from = btn.dataset.from;
+        document.getElementById('form' + from).classList.add('hidden');
         document.getElementById('step1').classList.remove('hidden');
         clearInterval(timerInterval);
         document.getElementById('timer').classList.add('hidden');
-      };
+      });
     });
 
-    // функция привязки ratio
-    function bindRatio(maxId,minId,resId,fMax,fMin,fRatio,cutoff){
-      const upd=()=>{
-        const mx=parseFloat(document.getElementById(maxId).value),
-              mn=parseFloat(document.getElementById(minId).value);
-        if(!isNaN(mx)&&!isNaN(mn)){
-          const r=(mx-mn)/((mx+mn)/2)*100;
-          document.getElementById(resId).textContent = r.toFixed(1)+'% '+cutoff;
-          formData[fMax]=mx; formData[fMin]=mn; formData[fRatio]=r;
+    // Привязка расчёта процентов (пример для IJV, остальные аналогично)
+    function bindRatio(maxId, minId, resId, fMax, fMin, fRatio, cutoffText) {
+      function update() {
+        const mx = parseFloat(document.getElementById(maxId).value),
+              mn = parseFloat(document.getElementById(minId).value);
+        if (!isNaN(mx) && !isNaN(mn)) {
+          const r = (mx - mn) / ((mx + mn) / 2) * 100;
+          document.getElementById(resId).textContent = r.toFixed(1) + '% ' + cutoffText;
+          formData[fMax]   = mx;
+          formData[fMin]   = mn;
+          formData[fRatio] = r;
         }
-      };
-      [maxId,minId].forEach(id=>
-        document.getElementById(id).addEventListener('input',upd)
-      );
+      }
+      document.getElementById(maxId).addEventListener('input', update);
+      document.getElementById(minId).addEventListener('input', update);
     }
 
-    // Блок 1
+    // Привяжем, например, блок 1:
     bindRatio('ven1_max','ven1_min','ven1_ratio','b1_ven_max','b1_ven_min','b1_ven_ratio','(отсечка 18%)');
     bindRatio('cca1_max','cca1_min','cca1_ratio','b1_cca_max','b1_cca_min','b1_cca_ratio','(отсечка 12%)');
-    document.getElementById('flow1_time').addEventListener('input',()=>{
-      const t=parseFloat(document.getElementById('flow1_time').value),
-            hr=parseInt(document.getElementById('hr1').value,10);
-      if(!isNaN(t)&&!isNaN(hr)){
-        const corr=t+1.3*(hr-60), cut=formData.age<65?325:340;
-        document.getElementById('flow1_corr').textContent = corr.toFixed(1)+' мс (отсечка '+cut+' мс)';
-        formData.b1_time=t; formData.b1_hr=hr; formData.b1_time_corrected=corr;
+    document.getElementById('flow1_time').addEventListener('input', () => {
+      const t  = parseFloat(document.getElementById('flow1_time').value),
+            hr = parseInt(document.getElementById('hr1').value, 10);
+      if (!isNaN(t) && !isNaN(hr)) {
+        const corr = t + 1.3 * (hr - 60),
+              cutoff = formData.age < 65 ? 325 : 340;
+        document.getElementById('flow1_corr').textContent = 
+          corr.toFixed(1) + ' мс (отсечка ' + cutoff + ' мс)';
+        formData.b1_time           = t;
+        formData.b1_hr             = hr;
+        formData.b1_time_corrected = corr;
       }
     });
 
-    // Аналогично привязки блоков 2–4…
+    // TODO: Привязать все остальные поля (blocks 2–6) тем же образом...
 
-    // Блок 5 LUS
-    function calcLus5(){
-      let sum=0;
-      for(let i=1;i<=6;i++){
-        sum += +document.getElementById('lus_r'+i).value;
-        sum += +document.getElementById('lus_l'+i).value;
+    // LUS-баллы
+    function calcLus(prefix, scoreField, scoreElem) {
+      let sum = 0;
+      for (let i = 1; i <= 6; i++) {
+        sum += parseInt(document.getElementById(prefix + i).value, 10) || 0;
       }
-      formData.lus_score = sum;
-      document.getElementById('lus_score').textContent = 'БАЛЛЫ ПО LUS – '+sum;
+      formData[scoreField] = sum;
+      document.getElementById(scoreElem).textContent = 
+        'БАЛЛЫ ПО LUS – ' + sum;
     }
-    for(let i=1;i<=6;i++){
-      ['lus_r','lus_l'].forEach(pr=>{
-        document.getElementById(pr+i).addEventListener('change',calcLus5);
-      });
-    }
-
-    // Блок 6 LUS
-    function calcLus6(){
-      let sum=0;
-      for(let i=1;i<=6;i++){
-        sum += +document.getElementById('lus6_r'+i).value;
-        sum += +document.getElementById('lus6_l'+i).value;
+    ['lus_r','lus_l','lus6_r','lus6_l'].forEach(pref => {
+      for (let i = 1; i <= 6; i++) {
+        document.getElementById(pref + i).addEventListener('change', () => {
+          if (pref.startsWith('lus6')) calcLus('lus6_r', 'lus6_score', 'lus6_score');
+          else                           calcLus('lus_r', 'lus_score',   'lus_score');
+        });
       }
-      formData.lus6_score = sum;
-      document.getElementById('lus6_score').textContent = 'БАЛЛЫ ПО LUS – '+sum;
-    }
-    for(let i=1;i<=6;i++){
-      ['lus6_r','lus6_l'].forEach(pr=>{
-        document.getElementById(pr+i).addEventListener('change',calcLus6);
-      });
-    }
+    });
 
-    // Отправка
-    document.querySelectorAll('.submit').forEach(btn=>{
-      btn.onclick = async ()=>{
+    // Обработчик «Завершить»
+    document.querySelectorAll('.submit').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        console.log('DEBUG ▶ click submit, block=', btn.dataset.block);
         stopTimer();
         formData.telegram_id = webApp.initDataUnsafe.user.id;
-        formData.block = btn.dataset.block;
-
-        // собираем флаги ... для каждого блока
-        if(formData.block=='5'){
-          ['r_cons','r_pneumo','r_hydro'].forEach(s=>{
-            formData['lus_'+s] = document.getElementById('lus_'+s).checked;
-          });
-          ['l_cons','l_pneumo','l_hydro'].forEach(s=>{
-            formData['lus_'+s] = document.getElementById('lus_'+s).checked;
-          });
-          formData.lus_err = document.getElementById('lus5_err').checked;
-          calcLus5();
+        // Собрать флаги err и LUS-флаги
+        if (formData.block === '5') {
+          formData.lus_error = document.getElementById('lus5_err').checked;
+          ['lus_r_cons','lus_r_pneumo','lus_r_hydro',
+           'lus_l_cons','lus_l_pneumo','lus_l_hydro']
+            .forEach(id => formData[id] = document.getElementById(id).checked);
+          calcLus('lus_r', 'lus_score', 'lus_score');
         }
-        if(formData.block=='6'){
-          // все из 4 + из 5
+        if (formData.block === '6') {
           formData.lus6_err = document.getElementById('lus6_err').checked;
-          calcLus6();
+          ['lus6_r_cons','lus6_r_pneumo','lus6_r_hydro',
+           'lus6_l_cons','lus6_l_pneumo','lus6_l_hydro']
+            .forEach(id => formData[id] = document.getElementById(id).checked);
+          calcLus('lus6_r', 'lus6_score', 'lus6_score');
         }
 
-        const payload = encodeURIComponent(JSON.stringify(formData));
-        await fetch(WEBHOOK_URL+'?data='+payload,{method:'GET',mode:'no-cors'});
-        alert('✔️ Сохранено, время '+formData.total_time+' сек.');
+        console.log('DEBUG ▶ formData=', formData);
+        try {
+          const res = await fetch(WEBHOOK_URL + '?data=' + 
+            encodeURIComponent(JSON.stringify(formData)), {
+              method: 'GET'
+            });
+          console.log('DEBUG ▶ fetch OK', res);
+        } catch (err) {
+          console.error('ERROR ▶ fetch failed', err);
+          alert('Ошибка при сохранении: ' + err.message);
+          return;
+        }
+
+        alert('✔️ Данные сохранены, время: ' + formData.total_time + ' сек.');
         webApp.close();
-      };
+      });
     });
-  </script>
+
+  }); // end DOMContentLoaded
+</script>
+
 </body>
 </html>
