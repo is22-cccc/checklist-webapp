@@ -277,44 +277,48 @@ document.querySelectorAll('.back').forEach(btn => {
     document.getElementById('heart_rate').addEventListener('input', updateTimeCorrected);
 
     // ===== Отправка =====
-    document
-  .querySelectorAll('#submit_button')
-  .forEach(btn => btn.addEventListener('click', async () => {
-      if (typeof formData.b1_ven_max === 'undefined' ||
-          typeof formData.b1_ven_min === 'undefined') {
-        alert("Заполните Max и Min внутренней яремной вены");
+    // вместо document.querySelectorAll('#submit_button').forEach(...)
+document.querySelectorAll('#submit_button').forEach(btn =>
+  btn.addEventListener('click', async () => {
+    const block = formData.block;
+    const form  = document.getElementById('form' + block);
+    
+    // Собираем все input (кроме чекбоксов) и select в этом блоке
+    const fields = form.querySelectorAll(
+      'input[type="text"], input[type="number"], select'
+    );
+    
+    // Проверяем, что у каждого есть непустое value
+    for (let field of fields) {
+      if (!field.value) {
+        alert(`Пожалуйста, заполните все поля блока ${block}`);
         return;
       }
-      if (typeof formData.b1_car_max === 'undefined' ||
-          typeof formData.b1_car_min === 'undefined') {
-        alert("Заполните Max и Min на общей сонной артерии");
-        return;
-      }
-      if (typeof formData.b1_time === 'undefined' ||
-          typeof formData.b1_hr   === 'undefined') {
-        alert("Заполните время потока и ЧСС");
-        return;
-      }
-if (formData.block === '5') {
-  // сохраняем статусы чекбоксов
-  ['r_cons','r_pneumo','r_hydro'].forEach(s => {
-    formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-  });
-  ['l_cons','l_pneumo','l_hydro'].forEach(s => {
-    formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-  });
-  // пересчитаем итог
-  calcLusScore();
-}
-      stopTimer();
-      formData.telegram_id = webApp.initDataUnsafe.user.id;
+    }
+    
+    // Если дошли сюда — все поля заполнены, можно продолжить
+    if (block === '5') {
+      // сохраняем статусы чекбоксов
+      ['r_cons','r_pneumo','r_hydro'].forEach(s => {
+        formData['lus_' + s] = document.getElementById('lus_' + s).checked;
+      });
+      ['l_cons','l_pneumo','l_hydro'].forEach(s => {
+        formData['lus_' + s] = document.getElementById('lus_' + s).checked;
+      });
+      calcLusScore();
+    } else {
+      // здесь можно оставить специфичные для блока 1 расчёты (если нужно)
+    }
+    
+    stopTimer();
+    formData.telegram_id = webApp.initDataUnsafe.user.id;
+    const url = WEBHOOK_URL + '?data=' + encodeURIComponent(JSON.stringify(formData));
+    await fetch(url, { method: 'GET', mode: 'no-cors' });
+    alert("✔️ Данные сохранены в таблицу\nОбщее время: " + formData.total_time + " сек.");
+    webApp.close();
+  })
+);
 
-      const url = WEBHOOK_URL + '?data=' + encodeURIComponent(JSON.stringify(formData));
-      await fetch(url, { method: 'GET', mode: 'no-cors' });
-
-      alert("✔️ Данные сохранены в таблицу\nОбщее время: " + formData.total_time + " сек.");
-      webApp.close();
-    }));
   </script>
 </body>
 </html>
