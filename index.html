@@ -143,7 +143,8 @@
      <label><input type="checkbox" id="lus_error"> Технические погрешности</label>
     
     <button class="secondary back" data-from="5">Назад</button>
-    <button class="submit" data-block="5">Завершить</button>
+    <button type="button" id="submit_button" data-block="5">Завершить</button>
+
   </div>
   <script>
     const webApp = Telegram.WebApp;
@@ -220,7 +221,7 @@ document.querySelectorAll('.back').forEach(btn => {
 });
 
     document.getElementById('step1_back').addEventListener('click', () => {
-      document.getElementById('block1_form').classList.add('hidden');
+      document.getElementById('form1').classList.add('hidden');
       document.getElementById('step1').classList.remove('hidden');
       clearInterval(timerInterval);
       document.getElementById('timer').classList.add('hidden');
