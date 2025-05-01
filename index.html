@@ -290,26 +290,30 @@ document.querySelectorAll('.back').forEach(btn => {
         alert("Заполните время потока и ЧСС");
         return;
       }
-if (formData.block === '5') {
-  // сохраняем статусы чекбоксов
-  ['r_cons','r_pneumo','r_hydro'].forEach(s => {
-    formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-  });
-  ['l_cons','l_pneumo','l_hydro'].forEach(s => {
-    formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-  });
-  // пересчитаем итог
-  calcLusScore();
-}
-      stopTimer();
-      formData.telegram_id = webApp.initDataUnsafe.user.id;
+document.querySelectorAll('button.submit').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    stopTimer();
+    formData.telegram_id = webApp.initDataUnsafe.user.id;
+    formData.block = btn.dataset.block;
 
-      const url = WEBHOOK_URL + '?data=' + encodeURIComponent(JSON.stringify(formData));
-      await fetch(url, { method: 'GET', mode: 'no-cors' });
+    if (formData.block === '5') {
+      // собираем чекбоксы блока 5
+      ['r_cons','r_pneumo','r_hydro'].forEach(s => {
+        formData['lus_' + s] = document.getElementById('lus_' + s).checked;
+      });
+      ['l_cons','l_pneumo','l_hydro'].forEach(s => {
+        formData['lus_' + s] = document.getElementById('lus_' + s).checked;
+      });
+      calcLusScore();
+    }
 
-      alert("✔️ Данные сохранены в таблицу\nОбщее время: " + formData.total_time + " сек.");
-      webApp.close();
-    });
+    const payload = encodeURIComponent(JSON.stringify(formData));
+    await fetch(WEBHOOK_URL + '?data=' + payload, { method: 'GET', mode: 'no-cors' });
+
+    alert(`✔️ Данные сохранены в таблицу\nОбщее время: ${formData.total_time} сек.`);
+    webApp.close();
+  });
+});
   </script>
 </body>
 </html>
