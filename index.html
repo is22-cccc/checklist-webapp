@@ -71,7 +71,7 @@
   </div>
 
   <!-- Шаг 2: Блок 1 -->
-  <div id="block1_form" class="section hidden">
+  <div id="form1" class="section hidden">
     <h2>Блок 1: Вена и артерия</h2>
 
     <!-- IJV -->
@@ -201,18 +201,21 @@ document.querySelectorAll('.back').forEach(btn => {
 });
     
     // Шаг 1 → Шаг 2
-    document.getElementById('step1_next').addEventListener('click', () => {
-      formData.block      = document.getElementById('block_select').value;
-      formData.patient_id = document.getElementById('patient_id').value.trim();
-      formData.age        = parseInt(document.getElementById('patient_age').value, 10);
+   document.getElementById('step1_next').addEventListener('click', () => {
+  formData.block      = document.getElementById('block_select').value;
+  formData.patient_id = document.getElementById('patient_id').value.trim();
+  formData.age        = parseInt(document.getElementById('patient_age').value, 10);
 
-      if (!formData.patient_id) { alert("Введите номер И/Б пациента"); return; }
-      if (isNaN(formData.age))   { alert("Введите возраст пациента");       return; }
+  if (!formData.patient_id) { alert("Введите номер И/Б пациента"); return; }
+  if (isNaN(formData.age))   { alert("Введите возраст пациента");       return; }
 
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('block1_form').classList.remove('hidden');
-      startTimer();
-    });
+  // Скрываем первый экран
+  document.getElementById('step1').classList.add('hidden');
+  // Показываем именно ту форму, чей номер совпадает с выбором
+  document.getElementById('form' + formData.block).classList.remove('hidden');
+  // Стартуем таймер
+  startTimer();
+});
 
     document.getElementById('step1_back').addEventListener('click', () => {
       document.getElementById('block1_form').classList.add('hidden');
