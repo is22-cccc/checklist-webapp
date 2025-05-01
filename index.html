@@ -105,7 +105,60 @@
     <button type="button" class="secondary" id="step1_back">Назад</button>
     <button type="button" id="submit_button">Завершить</button>
   </div>
-  
+
+<!-- Шаг 3: Блок 2 -->
+  <div id="form2" class="section hidden">
+    <h2>Блок 2: Продвинутый протокол</h2>
+
+    <!-- IJV -->
+    <h3>Вариабельность диаметра внутренней яремной вены при дыхании</h3>
+    <label for="ven_max">Max (мм):</label>
+    <input type="number" id="ven_max" step="0.1">
+    <label for="ven_min">Min (мм):</label>
+    <input type="number" id="ven_min" step="0.1">
+    <p id="ven_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="ven_error"> Технические погрешности</label>
+
+    <!-- НПВ -->
+    <h3>Вариабельность диаметра нижней полой вены при дыхании</h3>
+    <label for="venp_max">Max (мм):</label>
+    <input type="number" id="venp_max" step="0.1">
+    <label for="venp_min">Min (мм):</label>
+    <input type="number" id="venp_min" step="0.1">
+    <p id="venp_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="venp_error"> Технические погрешности</label>
+    
+    <!-- CCA -->
+    <h3>Вариабельность пиковой скорости в общей сонной артерии при дыхании</h3>
+    <label for="car_max">Max (мм):</label>
+    <input type="number" id="car_max" step="0.1">
+    <label for="car_min">Min (мм):</label>
+    <input type="number" id="car_min" step="0.1">
+    <p id="car_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="car_error"> Технические погрешности</label>
+
+    <!-- Flow time -->
+    <h3>Корректированное время потока на общей сонной артерии</h3>
+    <label for="flow_time">Время (мс):</label>
+    <input type="number" id="flow_time" step="0.1">
+    <label for="heart_rate">ЧСС:</label>
+    <input type="number" id="heart_rate">
+    <p id="time_corrected_result" class="result"></p>
+    <label><input type="checkbox" id="time_error"> Технические погрешности</label>
+
+    <!-- PA -->
+    <h3>Вариабельность пиковой скорости на плечевой артерии при дыхании</h3>
+    <label for="carp_max">Max (мм):</label>
+    <input type="number" id="carp_max" step="0.1">
+    <label for="carp_min">Min (мм):</label>
+    <input type="number" id="car_min" step="0.1">
+    <p id="carp_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="carp_error"> Технические погрешности</label> 
+    
+    <!-- Навигация -->
+    <button type="button" class="secondary" id="step1_back">Назад</button>
+    <button type="button" id="submit_button">Завершить</button>
+  </div>  
   <!-- Блок 5: УЗИ лёгких -->
   <div id="form5" class="section hidden">
     <h2>Блок 5: УЗИ лёгких</h2>
