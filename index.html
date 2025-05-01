@@ -297,14 +297,19 @@ document.querySelectorAll('#submit_button').forEach(btn =>
     }
     
     // Если дошли сюда — все поля заполнены, можно продолжить
-    if (block === '5') {
-      // сохраняем статусы чекбоксов
-      ['r_cons','r_pneumo','r_hydro'].forEach(s => {
-        formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-      });
-      ['l_cons','l_pneumo','l_hydro'].forEach(s => {
-        formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-      });
+    if (formData.block === '5') {
+      // 1) Собираем значения зон
+      for (let i = 1; i <= 6; i++) {
+        formData['lus_r' + i] = document.getElementById('lus_r' + i).value;
+        formData['lus_l' + i] = document.getElementById('lus_l' + i).value;
+      }
+      // 2) Собираем статусы чекбоксов
+      formData.lus_r_cons   = document.getElementById('lus_r_cons').checked;
+      formData.lus_r_pneumo = document.getElementById('lus_r_pneumo').checked;
+      formData.lus_r_hydro  = document.getElementById('lus_r_hydro').checked;
+      formData.lus_l_cons   = document.getElementById('lus_l_cons').checked;
+      formData.lus_l_pneumo = document.getElementById('lus_l_pneumo').checked;
+      formData.lus_l_hydro  = document.getElementById('lus_l_hydro').checked;
       calcLusScore();
     } else {
       // здесь можно оставить специфичные для блока 1 расчёты (если нужно)
