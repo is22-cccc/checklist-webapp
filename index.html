@@ -6,53 +6,84 @@
   <title>Чек-лист УЗ-мониторинга</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 20px; padding-top:60px; padding-bottom:200px; background:#f4f4f4; }
-    .timer { position:fixed; top:0; left:0; right:0; background:#0088cc; color:#fff; text-align:center; padding:10px 0; font-size:18px; font-weight:bold; z-index:1000; }
-    .hidden { display:none; }
-    .section { background:#fff; padding:15px; border-radius:8px; margin-bottom:20px; }
-    h2, h3 { margin-top:0; }
-    label { display:block; margin:8px 0 4px; }
-    input, select { width:100%; padding:8px; margin-bottom:12px; box-sizing:border-box; }
-    button { padding:10px 20px; margin:6px 4px 0 0; border:none; border-radius:5px; background:#0088cc; color:#fff; font-size:16px; cursor:pointer; }
-    button.secondary { background:#666; }
-    p.result { font-weight:bold; margin:4px 0 12px; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      padding-top: 60px;
+      padding-bottom: 200px;
+      background-color: #f4f4f4;
+    }
+    .timer {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: #0088cc;
+      color: #fff;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 18px;
+      font-weight: bold;
+      z-index: 1000;
+    }
+    .hidden { display: none; }
+    .section {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    h2, h3 { margin-top: 0; }
+    label { display: block; margin: 8px 0 4px; }
+    input[type="text"], input[type="number"], select {
+      width: 100%; padding: 8px; margin-bottom: 12px; box-sizing: border-box;
+    }
+    button {
+      padding: 10px 20px; margin: 6px 4px 0 0;
+      border: none; border-radius: 5px; background: #0088cc; color: #fff;
+      font-size: 16px; cursor: pointer;
+    }
+    button.secondary { background: #666; }
+    p.result { font-weight: bold; margin: 4px 0 12px; }
   </style>
 </head>
 <body>
   <!-- Таймер -->
   <div id="timer" class="timer hidden">00:00</div>
 
-  <!-- Шаг 1 -->
+  <!-- Шаг 1: Исходные данные -->
   <div id="step1" class="section">
     <h2>Исходные данные</h2>
-    <label>Выберите блок:</label>
+    <label for="block_select">Выберите блок:</label>
     <select id="block_select">
       <option value="1">Блок 1</option>
       <option value="5">Блок 5 (УЗИ лёгких)</option>
     </select>
-    <label>Номер И/Б (ID пациента):</label>
+
+    <label for="patient_id">Номер И/Б (ID пациента):</label>
     <input type="text" id="patient_id" placeholder="ID пациента">
-    <label>Возраст пациента:</label>
+
+    <label for="patient_age">Возраст пациента:</label>
     <input type="number" id="patient_age" placeholder="Лет">
-    <button id="step1_next">Далее</button>
+
+    <button type="button" id="step1_next">Далее</button>
   </div>
 
   <!-- Форма Блока 1 -->
   <div id="form1" class="section hidden">
     <h2>Блок 1: Вена и артерия</h2>
-    <h3>Вариабельность диаметра внутренней яремной вены</h3>
+
+    <h3>Вариабельность диаметра внутренней яремной вены при дыхании</h3>
     <label>Max (мм): <input id="ven_max" type="number" step="0.1"></label>
     <label>Min (мм): <input id="ven_min" type="number" step="0.1"></label>
     <p id="ven_ratio" class="result"></p>
     <label><input id="ven_error" type="checkbox"> Тех. погрешности</label>
 
-    <h3>Вариабельность пиковой скорости сонной артерии</h3>
+    <h3>Вариабельность пиковой скорости в общей сонной артерии при дыхании</h3>
     <label>Max (мм): <input id="car_max" type="number" step="0.1"></label>
     <label>Min (мм): <input id="car_min" type="number" step="0.1"></label>
     <p id="car_ratio" class="result"></p>
     <label><input id="car_error" type="checkbox"> Тех. погрешности</label>
 
-    <h3>Корректированное время потока</h3>
+    <h3>Корректированное время потока на общей сонной артерии</h3>
     <label>Время (мс): <input id="flow_time" type="number" step="0.1"></label>
     <label>ЧСС: <input id="hr" type="number"></label>
     <p id="flow_corr" class="result"></p>
@@ -65,17 +96,17 @@
   <!-- Форма Блока 5 -->
   <div id="form5" class="section hidden">
     <h2>Блок 5: УЗИ лёгких</h2>
+
     <h3>Справа</h3>
-    <!-- Зоны 1–6 -->
     <label>Зона 1: <select id="lus_r1"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
-    <!-- ... аналогично для lus_r2–lus_r6 ... -->
+    <!-- ... аналогично зоны 2–6 ... -->
     <label><input id="lus_r_cons" type="checkbox"> Субплевральные консолидации</label>
     <label><input id="lus_r_pneumo" type="checkbox"> Пневмоторакс</label>
     <label><input id="lus_r_hydro" type="checkbox"> Гидроторакс</label>
 
     <h3>Слева</h3>
     <label>Зона 1: <select id="lus_l1"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
-    <!-- ... аналогично для lus_l2–lus_l6 ... -->
+    <!-- ... аналогично зоны 2–6 ... -->
     <label><input id="lus_l_cons" type="checkbox"> Субплевральные консолидации</label>
     <label><input id="lus_l_pneumo" type="checkbox"> Пневмоторакс</label>
     <label><input id="lus_l_hydro" type="checkbox"> Гидроторакс</label>
@@ -86,137 +117,139 @@
   </div>
 
   <script>
-    // инициализация WebApp
-    const webApp = Telegram.WebApp; webApp.ready();
-    const URL = "https://script.google.com/macros/s/AKfycbzfl5Ppyupn82FOZRPlgxgZ0XvC9OV8BQxapAumrWtkh7Bxi7IBVmfEiseXahgQVjmM/exec";
+    const webApp = Telegram.WebApp;
+    webApp.ready();
+
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzfl5Ppyupn82FOZRPlgxgZ0XvC9OV8BQxapAumrWtkh7Bxi7IBVmfEiseXahgQVjmM/exec";
     const formData = {};
     let timerInterval, startTime;
 
     // скролл при фокусе
-    document.querySelectorAll('input,select').forEach(el=>{
-      el.addEventListener('focus', ()=>el.scrollIntoView({behavior:'smooth',block:'center'}));
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('focus', () => el.scrollIntoView({ behavior: 'smooth', block: 'center' }));
     });
 
-    // ЛУС-счёт
-    function calcLusScore(){
-      let sum=0;
-      for(let i=1;i<=6;i++){
-        sum += parseInt(document.getElementById('lus_r'+i).value,10)||0;
-        sum += parseInt(document.getElementById('lus_l'+i).value,10)||0;
+    // LUS подсчет
+    function calcLusScore() {
+      let sum = 0;
+      for (let i = 1; i <= 6; i++) {
+        sum += parseInt(document.getElementById('lus_r' + i).value, 10) || 0;
+        sum += parseInt(document.getElementById('lus_l' + i).value, 10) || 0;
       }
-      formData.lus_score=sum;
-      document.getElementById('lus_score').textContent = 'БАЛЛЫ ПО LUS – '+sum;
+      formData.lus_score = sum;
+      document.getElementById('lus_score').textContent = 'БАЛЛЫ ПО LUS – ' + sum;
     }
-    for(let i=1;i<=6;i++){
-      ['lus_r','lus_l'].forEach(pref=>{
-        document.getElementById(pref+i).addEventListener('change',calcLusScore);
+    for (let i = 1; i <= 6; i++) {
+      ['lus_r', 'lus_l'].forEach(pref => {
+        document.getElementById(pref + i).addEventListener('change', calcLusScore);
       });
     }
 
-    // таймер
-    function startTimer(){
-      startTime=Date.now();
+    // Таймер
+    function startTimer() {
+      startTime = Date.now();
       document.getElementById('timer').classList.remove('hidden');
-      timerInterval = setInterval(()=>{
-        const sec=Math.floor((Date.now()-startTime)/1000),
-              m=String(Math.floor(sec/60)).padStart(2,'0'),
-              s=String(sec%60).padStart(2,'0');
-        document.getElementById('timer').textContent = `${m}:${s}`;
-      },1000);
+      timerInterval = setInterval(updateTimer, 1000);
     }
-    function stopTimer(){
+    function stopTimer() {
       clearInterval(timerInterval);
-      formData.total_time = Math.floor((Date.now()-startTime)/1000);
+      formData.total_time = Math.floor((Date.now() - startTime) / 1000);
+    }
+    function updateTimer() {
+      const elapsed = Math.floor((Date.now() - startTime) / 1000);
+      const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+      const s = String(elapsed % 60).padStart(2, '0');
+      document.getElementById('timer').textContent = `${m}:${s}`;
     }
 
-    // названия форм: form1, form5
-    // назад для всех
-    document.querySelectorAll('.back').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const f=btn.dataset.from;
-        document.getElementById('form'+f).classList.add('hidden');
+    // Переход назад
+    document.querySelectorAll('.back').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const f = btn.dataset.from;
+        document.getElementById('form' + f).classList.add('hidden');
         document.getElementById('step1').classList.remove('hidden');
         clearInterval(timerInterval);
         document.getElementById('timer').classList.add('hidden');
       });
     });
 
-    // шаг 1 → нужная форма
-    document.getElementById('step1_next').addEventListener('click',()=>{
-      formData.block   = document.getElementById('block_select').value;
+    // Шаг 1 → соответствующая форма
+    document.getElementById('step1_next').addEventListener('click', () => {
+      formData.block      = document.getElementById('block_select').value;
       formData.patient_id = document.getElementById('patient_id').value.trim();
-      formData.age     = parseInt(document.getElementById('patient_age').value,10);
-      if(!formData.patient_id){
-        alert('Введите ID пациента'); return;
-      }
-      if(isNaN(formData.age)){
-        alert('Введите возраст'); return;
-      }
+      formData.age        = parseInt(document.getElementById('patient_age').value, 10);
+
+      if (!formData.patient_id) { alert("Введите номер И/Б пациента"); return; }
+      if (isNaN(formData.age))   { alert("Введите возраст пациента"); return; }
+
       document.getElementById('step1').classList.add('hidden');
-      document.getElementById('form'+formData.block).classList.remove('hidden');
+      document.getElementById('form' + formData.block).classList.remove('hidden');
       startTimer();
     });
 
-    // Блок 1: расчёты
-    function updVen(){ 
-      const mx=parseFloat(ven_max.value), mn=parseFloat(ven_min.value);
-      if(!isNaN(mx)&&!isNaN(mn)){
-        const r=(mx-mn)/((mx+mn)/2)*100;
-        ven_ratio.textContent=r.toFixed(1)+'% (отсечка 18%)';
-        formData.b1_ven_max=mx; formData.b1_ven_min=mn; formData.b1_ven_ratio=r;
+    // Расчеты для блока 1
+    function updVen() {
+      const mx = parseFloat(document.getElementById('ven_max').value),
+            mn = parseFloat(document.getElementById('ven_min').value);
+      if (!isNaN(mx) && !isNaN(mn)) {
+        const r = (mx - mn) / ((mx + mn) / 2) * 100;
+        document.getElementById('ven_ratio').textContent = r.toFixed(1) + '% (отсечка 18%)';
+        formData.b1_ven_max = mx; formData.b1_ven_min = mn; formData.b1_ven_ratio = r;
       }
     }
-    function updCar(){ 
-      const mx=parseFloat(car_max.value), mn=parseFloat(car_min.value);
-      if(!isNaN(mx)&&!isNaN(mn)){
-        const r=(mx-mn)/((mx+mn)/2)*100;
-        car_ratio.textContent=r.toFixed(1)+'% (отсечка 12%)';
-        formData.b1_car_max=mx; formData.b1_car_min=mn; formData.b1_car_ratio=r;
+    function updCar() {
+      const mx = parseFloat(document.getElementById('car_max').value),
+            mn = parseFloat(document.getElementById('car_min').value);
+      if (!isNaN(mx) && !isNaN(mn)) {
+        const r = (mx - mn) / ((mx + mn) / 2) * 100;
+        document.getElementById('car_ratio').textContent = r.toFixed(1) + '% (отсечка 12%)';
+        formData.b1_car_max = mx; formData.b1_car_min = mn; formData.b1_car_ratio = r;
       }
     }
-    function updFlow(){
-      const t=parseFloat(flow_time.value), hr=parseInt(hr.value,10);
-      if(!isNaN(t)&&!isNaN(hr)){
-        const corr=t+1.3*(hr-60), cut=formData.age<65?325:340;
-        flow_corr.textContent=corr.toFixed(1)+' мс (отсечка '+cut+' мс)';
-        formData.b1_time=t; formData.b1_hr=hr; formData.b1_time_corrected=corr;
+    function updFlow() {
+      const t = parseFloat(document.getElementById('flow_time').value),
+            hr = parseInt(document.getElementById('hr').value, 10);
+      if (!isNaN(t) && !isNaN(hr)) {
+        const corr = t + 1.3 * (hr - 60),
+              cut = formData.age < 65 ? 325 : 340;
+        document.getElementById('flow_corr').textContent = corr.toFixed(1) + ' мс (отсечка ' + cut + ' мс)';
+        formData.b1_time = t; formData.b1_hr = hr; formData.b1_time_corrected = corr;
       }
     }
-    ven_max.addEventListener('input',updVen);
-    ven_min.addEventListener('input',updVen);
-    car_max.addEventListener('input',updCar);
-    car_min.addEventListener('input',updCar);
-    flow_time.addEventListener('input',updFlow);
-    hr.addEventListener('input',updFlow);
+    document.getElementById('ven_max').addEventListener('input', updVen);
+    document.getElementById('ven_min').addEventListener('input', updVen);
+    document.getElementById('car_max').addEventListener('input', updCar);
+    document.getElementById('car_min').addEventListener('input', updCar);
+    document.getElementById('flow_time').addEventListener('input', updFlow);
+    document.getElementById('hr').addEventListener('input', updFlow);
 
-    // единая отправка
-    document.querySelectorAll('button.submit').forEach(btn=>{
-      btn.addEventListener('click',async ()=>{
-        // валидация Блока 1
-        if(btn.dataset.block==='1'){
-          if(formData.b1_ven_ratio==null||formData.b1_car_ratio==null||formData.b1_time_corrected==null){
+    // Отправка для всех блоков
+    document.querySelectorAll('button.submit').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const blk = btn.dataset.block;
+        if (blk === '1') {
+          if (formData.b1_ven_ratio == null || formData.b1_car_ratio == null || formData.b1_time_corrected == null) {
             alert('Заполните все поля блока 1'); return;
           }
         }
-        // Блок 5
-        if(btn.dataset.block==='5'){
-          ['r_cons','r_pneumo','r_hydro','l_cons','l_pneumo','l_hydro']
-            .forEach(s=> formData['lus_'+s] = document.getElementById('lus_'+s).checked);
+        if (blk === '5') {
+          ['r_cons','r_pneumo','r_hydro','l_cons','l_pneumo','l_hydro'].forEach(s => {
+            formData['lus_'+s] = document.getElementById('lus_'+s).checked;
+          });
           calcLusScore();
         }
         stopTimer();
         formData.telegram_id = webApp.initDataUnsafe.user.id;
         const payload = encodeURIComponent(JSON.stringify(formData));
         try {
-          await fetch(URL+'?data='+payload,{method:'GET'});
-          alert(`✔️ Данные сохранены (время ${formData.total_time} сек)`);
+          await fetch(WEBHOOK_URL + '?data=' + payload, { method: 'GET' });
+          alert('✔️ Данные сохранены (время ' + formData.total_time + ' сек)');
           webApp.close();
-        } catch(e) {
-          alert('Ошибка при сохранении: '+e);
+        } catch (e) {
+          alert('Ошибка при сохранении: ' + e);
         }
       });
     });
-
   </script>
 </body>
 </html>
