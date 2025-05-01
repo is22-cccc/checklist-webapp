@@ -274,7 +274,7 @@ document.querySelectorAll('.back').forEach(btn => {
     document.getElementById('heart_rate').addEventListener('input', updateTimeCorrected);
 
     // ===== Отправка =====
-    document.getElementById('submit_button').addEventListener('click', async () => {
+// document.getElementById('submit_button').addEventListener('click', async () => {
       if (typeof formData.b1_ven_max === 'undefined' ||
           typeof formData.b1_ven_min === 'undefined') {
         alert("Заполните Max и Min внутренней яремной вены");
@@ -311,8 +311,7 @@ document.querySelectorAll('button.submit').forEach(btn => {
     await fetch(WEBHOOK_URL + '?data=' + payload, { method: 'GET', mode: 'no-cors' });
 
     alert(`✔️ Данные сохранены в таблицу\nОбщее время: ${formData.total_time} сек.`);
-    webApp.close();
-  });
+    webApp.close();});  });
 });
   </script>
 </body>
