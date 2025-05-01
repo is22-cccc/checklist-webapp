@@ -277,7 +277,9 @@ document.querySelectorAll('.back').forEach(btn => {
     document.getElementById('heart_rate').addEventListener('input', updateTimeCorrected);
 
     // ===== Отправка =====
-    document.getElementById('submit_button').addEventListener('click', async () => {
+    document
+  .querySelectorAll('#submit_button')
+  .forEach(btn => btn.addEventListener('click', async () => {
       if (typeof formData.b1_ven_max === 'undefined' ||
           typeof formData.b1_ven_min === 'undefined') {
         alert("Заполните Max и Min внутренней яремной вены");
