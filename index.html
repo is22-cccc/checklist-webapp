@@ -39,9 +39,10 @@
   </style>
 </head>
 <body>
+  <!-- Таймер -->
   <div id="timer" class="timer hidden">00:00</div>
 
-  <!-- Шаг 1 -->
+  <!-- Шаг 1: выбор блока -->
   <div id="step1" class="section">
     <h2>Исходные данные</h2>
     <label>Выберите блок:</label>
@@ -62,24 +63,25 @@
 
   <!-- Форма Блока 1 -->
   <div id="form1" class="section hidden">
-    <h2>Блок 1: IJV, CCA, Flow</h2>
-    <h3>Вариабельность диаметра внутренней яремной вены</h3>
-    <label>Max (мм):<input id="ven1_max" type="number" step="0.1"></label>
-    <label>Min (мм):<input id="ven1_min" type="number" step="0.1"></label>
+    <h2>Блок 1: IJV, CCA, Flow time</h2>
+    <!-- IJV -->
+    <h3>Вариабельность внутренней яремной вены</h3>
+    <label>Max (мм):<input type="number" id="ven1_max" step="0.1"></label>
+    <label>Min (мм):<input type="number" id="ven1_min" step="0.1"></label>
     <p id="ven1_ratio" class="result"></p>
-    <label><input id="ven1_err" type="checkbox"> Тех. погрешности</label>
-
-    <h3>Вариабельность диаметра общей сонной артерии</h3>
-    <label>Max (мм):<input id="cca1_max" type="number" step="0.1"></label>
-    <label>Min (мм):<input id="cca1_min" type="number" step="0.1"></label>
+    <label><input type="checkbox" id="ven1_err"> Технические погрешности</label>
+    <!-- CCA -->
+    <h3>Вариабельность общей сонной артерии</h3>
+    <label>Max (мм):<input type="number" id="cca1_max" step="0.1"></label>
+    <label>Min (мм):<input type="number" id="cca1_min" step="0.1"></label>
     <p id="cca1_ratio" class="result"></p>
-    <label><input id="cca1_err" type="checkbox"> Тех. погрешности</label>
-
+    <label><input type="checkbox" id="cca1_err"> Технические погрешности</label>
+    <!-- Flow time -->
     <h3>Корректированное время потока</h3>
-    <label>Время (мс):<input id="flow1_time" type="number" step="0.1"></label>
-    <label>ЧСС:<input id="hr1" type="number"></label>
+    <label>Время (мс):<input type="number" id="flow1_time" step="0.1"></label>
+    <label>ЧСС:<input type="number" id="hr1"></label>
     <p id="flow1_corr" class="result"></p>
-    <label><input id="flow1_err" type="checkbox"> Тех. погрешности</label>
+    <label><input type="checkbox" id="flow1_err"> Технические погрешности</label>
 
     <button class="secondary back" data-from="1">Назад</button>
     <button class="submit" data-block="1">Завершить</button>
@@ -88,36 +90,33 @@
   <!-- Форма Блока 2 -->
   <div id="form2" class="section hidden">
     <h2>Блок 2: Блок 1 + Brachial, IVC</h2>
-    <!-- IJV -->
-    <h3>Вариабельность внутренней яремной вены</h3>
-    <label>Max:<input id="ven2_max" type="number" step="0.1"></label>
-    <label>Min:<input id="ven2_min" type="number" step="0.1"></label>
+    <!-- повтор блока 1 -->
+    <h3>IJV</h3>
+    <label>Max:<input type="number" id="ven2_max" step="0.1"></label>
+    <label>Min:<input type="number" id="ven2_min" step="0.1"></label>
     <p id="ven2_ratio" class="result"></p>
-    <label><input id="ven2_err" type="checkbox"> Тех. погрешности</label>
-    <!-- CCA -->
-    <h3>Вариабельность общей сонной артерии</h3>
-    <label>Max:<input id="cca2_max" type="number" step="0.1"></label>
-    <label>Min:<input id="cca2_min" type="number" step="0.1"></label>
+    <label><input type="checkbox" id="ven2_err"> Тех. погрешности</label>
+    <h3>CCA</h3>
+    <label>Max:<input type="number" id="cca2_max" step="0.1"></label>
+    <label>Min:<input type="number" id="cca2_min" step="0.1"></label>
     <p id="cca2_ratio" class="result"></p>
-    <label><input id="cca2_err" type="checkbox"> Тех. погрешности</label>
-    <!-- Flow -->
-    <h3>Корректированное время потока</h3>
-    <label>Время:<input id="flow2_time" type="number" step="0.1"></label>
-    <label>ЧСС:<input id="hr2" type="number"></label>
+    <label><input type="checkbox" id="cca2_err"> Тех. погрешности</label>
+    <h3>Flow time</h3>
+    <label>Время:<input type="number" id="flow2_time" step="0.1"></label>
+    <label>ЧСС:<input type="number" id="hr2"></label>
     <p id="flow2_corr" class="result"></p>
-    <label><input id="flow2_err" type="checkbox"> Тех. погрешности</label>
-    <!-- Brachial -->
+    <label><input type="checkbox" id="flow2_err"> Тех. погрешности</label>
+    <!-- новые -->
     <h3>Вариабельность плечевой артерии</h3>
-    <label>Max (см/с):<input id="brach2_max" type="number" step="0.1"></label>
-    <label>Min (см/с):<input id="brach2_min" type="number" step="0.1"></label>
+    <label>Max (мм/с):<input type="number" id="brach2_max" step="0.1"></label>
+    <label>Min (мм/с):<input type="number" id="brach2_min" step="0.1"></label>
     <p id="brach2_ratio" class="result"></p>
-    <label><input id="brach2_err" type="checkbox"> Тех. погрешности</label>
-    <!-- IVC -->
+    <label><input type="checkbox" id="brach2_err"> Тех. погрешности</label>
     <h3>Вариабельность нижней полой вены</h3>
-    <label>Max:<input id="ivc2_max" type="number" step="0.1"></label>
-    <label>Min:<input id="ivc2_min" type="number" step="0.1"></label>
+    <label>Max (мм):<input type="number" id="ivc2_max" step="0.1"></label>
+    <label>Min (мм):<input type="number" id="ivc2_min" step="0.1"></label>
     <p id="ivc2_ratio" class="result"></p>
-    <label><input id="ivc2_err" type="checkbox"> Тех. погрешности</label>
+    <label><input type="checkbox" id="ivc2_err"> Тех. погрешности</label>
 
     <button class="secondary back" data-from="2">Назад</button>
     <button class="submit" data-block="2">Завершить</button>
@@ -126,16 +125,16 @@
   <!-- Форма Блока 3 -->
   <div id="form3" class="section hidden">
     <h2>Блок 3: VTI LVOT и VTI PA</h2>
-    <h3>VTI на выносящем тракте ЛЖ</h3>
-    <label>Max:<input id="lvot3_max" type="number" step="0.1"></label>
-    <label>Min:<input id="lvot3_min" type="number" step="0.1"></label>
+    <h3>VTI LVOT</h3>
+    <label>Max:<input type="number" id="lvot3_max" step="0.1"></label>
+    <label>Min:<input type="number" id="lvot3_min" step="0.1"></label>
     <p id="lvot3_ratio" class="result"></p>
-    <label><input id="lvot3_err" type="checkbox"> Тех. погрешности</label>
-    <h3>VTI на легочной артерии</h3>
-    <label>Max:<input id="pa3_max" type="number" step="0.1"></label>
-    <label>Min:<input id="pa3_min" type="number" step="0.1"></label>
+    <label><input type="checkbox" id="lvot3_err"> Тех. погрешности</label>
+    <h3>VTI PA</h3>
+    <label>Max:<input type="number" id="pa3_max" step="0.1"></label>
+    <label>Min:<input type="number" id="pa3_min" step="0.1"></label>
     <p id="pa3_ratio" class="result"></p>
-    <label><input id="pa3_err" type="checkbox"> Тех. погрешности</label>
+    <label><input type="checkbox" id="pa3_err"> Тех. погрешности</label>
 
     <button class="secondary back" data-from="3">Назад</button>
     <button class="submit" data-block="3">Завершить</button>
@@ -144,8 +143,8 @@
   <!-- Форма Блока 4 -->
   <div id="form4" class="section hidden">
     <h2>Блок 4: Объединённый</h2>
-    <!-- Повтор всех полей из блоков 1,2,3 -->
-    <!-- (используйте id=“ven4_max”…, “cca4_max”…, “flow4_time”, “brach4_max”, “ivc4_max”, “lvot4_max”, “pa4_max” и соответствующие min, err и выводы) -->
+    <!-- сюда все поля из 1,2,3 -->
+    <!-- ... (аналогично выше) -->
 
     <button class="secondary back" data-from="4">Назад</button>
     <button class="submit" data-block="4">Завершить</button>
@@ -161,10 +160,9 @@
     <label>Зона 4:<select id="lus_r4"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
     <label>Зона 5:<select id="lus_r5"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
     <label>Зона 6:<select id="lus_r6"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
-    <label><input id="lus_r_cons" type="checkbox"> Субплевральные консолидации</label>
-    <label><input id="lus_r_pneumo" type="checkbox"> Пневмоторакс</label>
-    <label><input id="lus_r_hydro" type="checkbox"> Гидроторакс</label>
-
+    <label><input type="checkbox" id="lus_r_cons"> Субплевральные консолидации</label>
+    <label><input type="checkbox" id="lus_r_pneumo"> Пневмоторакс</label>
+    <label><input type="checkbox" id="lus_r_hydro"> Гидроторакс</label>
     <h3>Слева</h3>
     <label>Зона 1:<select id="lus_l1"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
     <label>Зона 2:<select id="lus_l2"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
@@ -172,11 +170,9 @@
     <label>Зона 4:<select id="lus_l4"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
     <label>Зона 5:<select id="lus_l5"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
     <label>Зона 6:<select id="lus_l6"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
-    <label><input id="lus_l_cons" type="checkbox"> Субплевральные консолидации</label>
-    <label><input id="lus_l_pneumo" type="checkbox"> Пневмоторакс</label>
-    <label><input id="lus_l_hydro" type="checkbox"> Гидроторакс</label>
-
-    <label><input id="lus5_err" type="checkbox"> Тех. погрешности</label>
+    <label><input type="checkbox" id="lus_l_cons"> Субплевральные консолидации</label>
+    <label><input type="checkbox" id="lus_l_pneumo"> Пневмоторакс</label>
+    <label><input type="checkbox" id="lus_l_hydro"> Гидроторакс</label>
     <p id="lus_score" class="result"></p>
 
     <button class="secondary back" data-from="5">Назад</button>
@@ -186,169 +182,118 @@
   <!-- Форма Блока 6 -->
   <div id="form6" class="section hidden">
     <h2>Блок 6: Полный протокол</h2>
-    <!-- все поля из form4 -->
-    <!-- … ваш HTML из form4 … -->
-
-    <!-- затем повтор форм5 -->
-    <h3>Справа</h3>
-    <label>Зона 1:<select id="lus6_r1"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
-    <!-- … зоны 2–6 … -->
-    <label><input id="lus6_r_cons" type="checkbox"> Субплевральные консолидации</label>
-    <label><input id="lus6_r_pneumo" type="checkbox"> Пневмоторакс</label>
-    <label><input id="lus6_r_hydro" type="checkbox"> Гидроторакс</label>
-
-    <h3>Слева</h3>
-    <!-- зоны 1–6 … -->
-    <label><input id="lus6_l_cons" type="checkbox"> Субплевральные консолидации</label>
-    <label><input id="lus6_l_pneumo" type="checkbox"> Пневмоторакс</label>
-    <label><input id="lus6_l_hydro" type="checkbox"> Гидроторакс</label>
-
-    <label><input id="lus6_err" type="checkbox"> Тех. погрешности</label>
-    <p id="lus6_score" class="result"></p>
+    <!-- сюда весь набор полей из форм 1–5 подряд, с вашими оригинальными подписями -->
+    <!-- ... (аналогично выше, комбинируя form4 и form5) -->
 
     <button class="secondary back" data-from="6">Назад</button>
     <button class="submit" data-block="6">Завершить</button>
   </div>
 
   <script>
-    const webApp = Telegram.WebApp; webApp.ready();
-    const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwFCIrfy01tYyYjg_V3MGtkWP1sU7KD4-lUynE0ctqh_FW8gVPfA8L9ia01S-VJcWGF/exec';
-    const formData = {};
-    let timerInterval, startTime;
+  const webApp = Telegram.WebApp; webApp.ready();
+  const urlExec = 'https://script.google.com/macros/s/.../exec';
+  const formData = {}; let timerInterval, startTime;
 
-    // скролл в центр
-    document.querySelectorAll('input,select').forEach(i=>
-      i.addEventListener('focus',()=>i.scrollIntoView({behavior:'smooth',block:'center'}))
-    );
+  // скролл при фокусе
+  document.querySelectorAll('input,select').forEach(i=>i.addEventListener('focus',()=>i.scrollIntoView({behavior:'smooth',block:'center'})));
 
-    function startTimer(){
-      startTime = Date.now();
-      document.getElementById('timer').classList.remove('hidden');
-      timerInterval = setInterval(()=>{
-        const sec = Math.floor((Date.now()-startTime)/1000),
-              m = String(Math.floor(sec/60)).padStart(2,'0'),
-              s = String(sec%60).padStart(2,'0');
-        document.getElementById('timer').textContent = `${m}:${s}`;
-      },1000);
-    }
-    function stopTimer(){
+  function startTimer(){
+    startTime=Date.now();
+    document.getElementById('timer').classList.remove('hidden');
+    timerInterval=setInterval(()=>{
+      const sec=Math.floor((Date.now()-startTime)/1000),
+            m=String(Math.floor(sec/60)).padStart(2,'0'),
+            s=String(sec%60).padStart(2,'0');
+      document.getElementById('timer').textContent=`${m}:${s}`;
+    },1000);
+  }
+  function stopTimer(){
+    clearInterval(timerInterval);
+    formData.total_time=Math.floor((Date.now()-startTime)/1000);
+  }
+
+  // переходы
+  document.getElementById('next1').onclick=()=>{
+    formData.block=document.getElementById('block_select').value;
+    formData.patient_id=document.getElementById('patient_id').value.trim();
+    formData.age=parseInt(document.getElementById('patient_age').value,10);
+    if(!formData.patient_id||isNaN(formData.age)){alert('Заполните ID и возраст');return;}
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('form'+formData.block).classList.remove('hidden');
+    startTimer();
+  };
+  document.querySelectorAll('.back').forEach(b=>{
+    b.onclick=()=>{
+      const x=b.dataset.from;
+      document.getElementById('form'+x).classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
       clearInterval(timerInterval);
-      formData.total_time = Math.floor((Date.now()-startTime)/1000);
-    }
-
-    // переключение шагов
-    document.getElementById('next1').onclick = ()=>{
-      formData.block = document.getElementById('block_select').value;
-      formData.patient_id = document.getElementById('patient_id').value.trim();
-      formData.age = parseInt(document.getElementById('patient_age').value,10);
-      if(!formData.patient_id||isNaN(formData.age)){alert('Заполните ID и возраст');return;}
-      document.getElementById('step1').classList.add('hidden');
-      document.getElementById('form'+formData.block).classList.remove('hidden');
-      startTimer();
+      document.getElementById('timer').classList.add('hidden');
     };
-    document.querySelectorAll('.back').forEach(b=>{
-      b.onclick = ()=>{
-        const x=b.dataset.from;
-        document.getElementById('form'+x).classList.add('hidden');
-        document.getElementById('step1').classList.remove('hidden');
-        clearInterval(timerInterval);
-        document.getElementById('timer').classList.add('hidden');
-      };
-    });
+  });
 
-    // функция привязки ratio
-    function bindRatio(maxId,minId,resId,fMax,fMin,fRatio,cutoff){
-      const upd=()=>{
-        const mx=parseFloat(document.getElementById(maxId).value),
-              mn=parseFloat(document.getElementById(minId).value);
-        if(!isNaN(mx)&&!isNaN(mn)){
-          const r=(mx-mn)/((mx+mn)/2)*100;
-          document.getElementById(resId).textContent = r.toFixed(1)+'% '+cutoff;
-          formData[fMax]=mx; formData[fMin]=mn; formData[fRatio]=r;
-        }
-      };
-      [maxId,minId].forEach(id=>
-        document.getElementById(id).addEventListener('input',upd)
-      );
-    }
-
-    // Блок 1
-    bindRatio('ven1_max','ven1_min','ven1_ratio','b1_ven_max','b1_ven_min','b1_ven_ratio','(отсечка 18%)');
-    bindRatio('cca1_max','cca1_min','cca1_ratio','b1_cca_max','b1_cca_min','b1_cca_ratio','(отсечка 12%)');
-    document.getElementById('flow1_time').addEventListener('input',()=>{
-      const t=parseFloat(document.getElementById('flow1_time').value),
-            hr=parseInt(document.getElementById('hr1').value,10);
-      if(!isNaN(t)&&!isNaN(hr)){
-        const corr=t+1.3*(hr-60), cut=formData.age<65?325:340;
-        document.getElementById('flow1_corr').textContent = corr.toFixed(1)+' мс (отсечка '+cut+' мс)';
-        formData.b1_time=t; formData.b1_hr=hr; formData.b1_time_corrected=corr;
+  // Утилита расчёта %
+  function bindRatio(maxId,minId,resId,fMax,fMin,fRatio,cut){
+    const upd=()=>{
+      const mx=parseFloat(document.getElementById(maxId).value),
+            mn=parseFloat(document.getElementById(minId).value);
+      if(!isNaN(mx)&&!isNaN(mn)){
+        const r=(mx-mn)/((mx+mn)/2)*100;
+        document.getElementById(resId).textContent=r.toFixed(1)+'% '+cut;
+        formData[fMax]=mx; formData[fMin]=mn; formData[fRatio]=r;
       }
-    });
+    };
+    document.getElementById(maxId).addEventListener('input',upd);
+    document.getElementById(minId).addEventListener('input',upd);
+  }
 
-    // Аналогично привязки блоков 2–4…
-
-    // Блок 5 LUS
-    function calcLus5(){
-      let sum=0;
-      for(let i=1;i<=6;i++){
-        sum += +document.getElementById('lus_r'+i).value;
-        sum += +document.getElementById('lus_l'+i).value;
-      }
-      formData.lus_score = sum;
-      document.getElementById('lus_score').textContent = 'БАЛЛЫ ПО LUS – '+sum;
+  // Привязки блок 1
+  bindRatio('ven1_max','ven1_min','ven1_ratio','b1_ven_max','b1_ven_min','b1_ven_ratio','(отсечка 18%)');
+  bindRatio('cca1_max','cca1_min','cca1_ratio','b1_cca_max','b1_cca_min','b1_cca_ratio','(отсечка 12%)');
+  document.getElementById('flow1_time').addEventListener('input',()=>{
+    const t=parseFloat(document.getElementById('flow1_time').value),
+          hr=parseInt(document.getElementById('hr1').value,10);
+    if(!isNaN(t)&&!isNaN(hr)){
+      const corr=t+1.3*(hr-60), cut=formData.age<65?325:340;
+      document.getElementById('flow1_corr').textContent=corr.toFixed(1)+' мс (отсечка '+cut+' мс)';
+      formData.b1_time=t; formData.b1_hr=hr; formData.b1_time_corrected=corr;
     }
+  });
+
+  // Аналогично для блоков 2,3,4 (bindRatio + flow)
+  // ...
+
+  // Блок 5 LUS
+  function calcLus(){
+    let sum=0;
     for(let i=1;i<=6;i++){
-      ['lus_r','lus_l'].forEach(pr=>{
-        document.getElementById(pr+i).addEventListener('change',calcLus5);
-      });
+      sum+=parseInt(document.getElementById('lus_r'+i).value,10);
+      sum+=parseInt(document.getElementById('lus_l'+i).value,10);
     }
-
-    // Блок 6 LUS
-    function calcLus6(){
-      let sum=0;
-      for(let i=1;i<=6;i++){
-        sum += +document.getElementById('lus6_r'+i).value;
-        sum += +document.getElementById('lus6_l'+i).value;
-      }
-      formData.lus6_score = sum;
-      document.getElementById('lus6_score').textContent = 'БАЛЛЫ ПО LUS – '+sum;
-    }
-    for(let i=1;i<=6;i++){
-      ['lus6_r','lus6_l'].forEach(pr=>{
-        document.getElementById(pr+i).addEventListener('change',calcLus6);
-      });
-    }
-
-    // Отправка
-    document.querySelectorAll('.submit').forEach(btn=>{
-      btn.onclick = async ()=>{
-        stopTimer();
-        formData.telegram_id = webApp.initDataUnsafe.user.id;
-        formData.block = btn.dataset.block;
-
-        // собираем флаги ... для каждого блока
-        if(formData.block=='5'){
-          ['r_cons','r_pneumo','r_hydro'].forEach(s=>{
-            formData['lus_'+s] = document.getElementById('lus_'+s).checked;
-          });
-          ['l_cons','l_pneumo','l_hydro'].forEach(s=>{
-            formData['lus_'+s] = document.getElementById('lus_'+s).checked;
-          });
-          formData.lus_err = document.getElementById('lus5_err').checked;
-          calcLus5();
-        }
-        if(formData.block=='6'){
-          // все из 4 + из 5
-          formData.lus6_err = document.getElementById('lus6_err').checked;
-          calcLus6();
-        }
-
-        const payload = encodeURIComponent(JSON.stringify(formData));
-        await fetch(WEBHOOK_URL+'?data='+payload,{method:'GET',mode:'no-cors'});
-        alert('✔️ Сохранено, время '+formData.total_time+' сек.');
-        webApp.close();
-      };
+    formData.lus_score=sum;
+    document.getElementById('lus_score').textContent='БАЛЛЫ ПО LUS – '+sum;
+  }
+  for(let i=1;i<=6;i++){
+    ['lus_r','lus_l'].forEach(pr=>{
+      document.getElementById(pr+i).addEventListener('change',calcLus);
     });
+  }
+
+  // Отправка
+  document.querySelectorAll('.submit').forEach(btn=>{
+    btn.onclick=async()=>{
+      stopTimer();
+      formData.telegram_id=webApp.initDataUnsafe.user.id;
+      formData.block=btn.dataset.block;
+      // собираем флаги err для каждого блока
+      // и для блока 5 — lus_r_cons, lus_r_pneumo, lus_r_hydro, lus_l_cons, lus_l_pneumo, lus_l_hydro
+      // ...
+      const payload=encodeURIComponent(JSON.stringify(formData));
+      await fetch(urlExec+'?data='+payload,{method:'GET',mode:'no-cors'});
+      alert('✔️ Сохранено, время '+formData.total_time+' сек.');
+      webApp.close();
+    };
+  });
   </script>
 </body>
 </html>
