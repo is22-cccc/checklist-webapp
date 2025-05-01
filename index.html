@@ -14,22 +14,15 @@
       background-color: #f4f4f4;
     }
     .timer {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      background: #0088cc;
-      color: #fff;
-      text-align: center;
-      padding: 10px 0;
-      font-size: 18px;
-      font-weight: bold;
-      z-index: 1000;
+      position: fixed; top: 0; left: 0; right: 0;
+      background: #0088cc; color: #fff;
+      text-align: center; padding: 10px 0;
+      font-size: 18px; font-weight: bold; z-index: 1000;
     }
     .hidden { display: none; }
     .section {
-      background: #fff;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
+      background: #fff; padding: 15px;
+      border-radius: 8px; margin-bottom: 20px;
     }
     h2, h3 { margin-top: 0; }
     label { display: block; margin: 8px 0 4px; }
@@ -49,7 +42,7 @@
   <!-- Таймер -->
   <div id="timer" class="timer hidden">00:00</div>
 
-  <!-- Шаг 1: Исходные данные -->
+  <!-- Шаг 1 -->
   <div id="step1" class="section">
     <h2>Исходные данные</h2>
     <label for="block_select">Выберите блок:</label>
@@ -60,20 +53,16 @@
       <option value="4">Блок 4 Полный протокол</option>
       <option value="5">Блок 5 УЗИ лёгких</option>
     </select>
-
     <label for="patient_id">Номер И/Б (ID пациента):</label>
     <input type="text" id="patient_id" placeholder="ID пациента">
-
     <label for="patient_age">Возраст пациента:</label>
     <input type="number" id="patient_age" placeholder="Лет">
-
     <button type="button" id="step1_next">Далее</button>
   </div>
 
   <!-- Блок 1 -->
   <div id="form1" class="section hidden">
     <h2>Блок 1: Вена и артерия</h2>
-
     <h3>Вариабельность диаметра внутренней яремной вены при дыхании</h3>
     <label for="ven_max">Max (мм):</label>
     <input type="number" id="ven_max" step="0.1">
@@ -105,7 +94,6 @@
   <!-- Блок 5: УЗИ лёгких -->
   <div id="form5" class="section hidden">
     <h2>Блок 5: УЗИ лёгких</h2>
-
     <h3>Справа</h3>
     <label>Зона 1:
       <select id="lus_r1"><option>0</option><option>1</option><option>2</option><option>3</option></select>
@@ -114,7 +102,6 @@
     <label><input type="checkbox" id="lus_r_cons"> Субплевральные консолидации</label>
     <label><input type="checkbox" id="lus_r_pneumo"> Пневмоторакс</label>
     <label><input type="checkbox" id="lus_r_hydro"> Гидроторакс</label>
-
     <h3>Слева</h3>
     <label>Зона 1:
       <select id="lus_l1"><option>0</option><option>1</option><option>2</option><option>3</option></select>
@@ -125,7 +112,6 @@
     <label><input type="checkbox" id="lus_l_hydro"> Гидроторакс</label>
 
     <p id="lus_score" class="result"></p>
-
     <button class="secondary back" data-from="5">Назад</button>
     <button class="submit" data-block="5">Завершить</button>
   </div>
@@ -138,121 +124,133 @@
     const formData = {};
     let timerInterval, startTime;
 
+    // —————————————————————————————
+    // здесь сразу подтягиваем все нужные элементы Блока 1
+    const ven_max  = document.getElementById('ven_max'),
+          ven_min  = document.getElementById('ven_min'),
+          ven_ratio_result = document.getElementById('ven_ratio_result'),
+          car_max  = document.getElementById('car_max'),
+          car_min  = document.getElementById('car_min'),
+          car_ratio_result = document.getElementById('car_ratio_result'),
+          flow_time = document.getElementById('flow_time'),
+          heart_rate = document.getElementById('heart_rate'),
+          time_corrected_result = document.getElementById('time_corrected_result');
+    // —————————————————————————————
+
     // скролл при фокусе
     document.querySelectorAll('input, select').forEach(el =>
       el.addEventListener('focus', () => el.scrollIntoView({ behavior: 'smooth', block: 'center' }))
     );
 
-    // LUS: подсчёт баллов
-    function calcLusScore() {
-      let sum = 0;
-      for (let i = 1; i <= 6; i++) {
-        sum += parseInt(document.getElementById('lus_r' + i).value, 10) || 0;
-        sum += parseInt(document.getElementById('lus_l' + i).value, 10) || 0;
-      }
-      formData.lus_score = sum;
-      document.getElementById('lus_score').textContent = 'БАЛЛЫ ПО LUS – ' + sum;
-    }
-    for (let i = 1; i <= 6; i++) {
-      ['lus_r', 'lus_l'].forEach(pref => {
-        document.getElementById(pref + i).addEventListener('change', calcLusScore);
-      });
-    }
-
-    function startTimer() {
-      startTime = Date.now();
-      document.getElementById('timer').classList.remove('hidden');
-      timerInterval = setInterval(() => {
-        const sec = Math.floor((Date.now() - startTime) / 1000);
-        const m = String(Math.floor(sec / 60)).padStart(2,'0');
-        const s = String(sec % 60).padStart(2,'0');
-        document.getElementById('timer').textContent = `${m}:${s}`;
-      }, 1000);
-    }
-    function stopTimer() {
-      clearInterval(timerInterval);
-      formData.total_time = Math.floor((Date.now() - startTime) / 1000);
-    }
-
-    // Назад для всех форм
-    document.querySelectorAll('.back').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const from = btn.dataset.from;
-        document.getElementById('form' + from).classList.add('hidden');
-        document.getElementById('step1').classList.remove('hidden');
-        clearInterval(timerInterval);
-        document.getElementById('timer').classList.add('hidden');
-      });
-    });
-
-   
-
-    // IJV, CCA и Flow ratio (как было)
+    // коэффициенты для IJV, CCA и Flow
     function updateVenRatio() {
-      const max = parseFloat(ven_max.value), min = parseFloat(ven_min.value);
+      const max = parseFloat(ven_max.value),
+            min = parseFloat(ven_min.value);
       if (!isNaN(max) && !isNaN(min)) {
-        const r = (max - min) / ((max + min)/2)*100;
+        const r = (max - min) / ((max + min)/2) * 100;
         ven_ratio_result.textContent = r.toFixed(1) + '% точка отсечения 18%';
-        formData.b1_ven_max = max; formData.b1_ven_min = min; formData.b1_ven_ratio = r;
+        formData.b1_ven_max = max;
+        formData.b1_ven_min = min;
+        formData.b1_ven_ratio = r;
       }
     }
     ven_max.addEventListener('input', updateVenRatio);
     ven_min.addEventListener('input', updateVenRatio);
 
     function updateCarRatio() {
-      const max = parseFloat(car_max.value), min = parseFloat(car_min.value);
+      const max = parseFloat(car_max.value),
+            min = parseFloat(car_min.value);
       if (!isNaN(max) && !isNaN(min)) {
-        const r = (max - min) / ((max + min)/2)*100;
+        const r = (max - min) / ((max + min)/2) * 100;
         car_ratio_result.textContent = r.toFixed(1) + '% точка отсечения 12%';
-        formData.b1_car_max = max; formData.b1_car_min = min; formData.b1_car_ratio = r;
+        formData.b1_car_max = max;
+        formData.b1_car_min = min;
+        formData.b1_car_ratio = r;
       }
     }
     car_max.addEventListener('input', updateCarRatio);
     car_min.addEventListener('input', updateCarRatio);
 
-    flow_time.addEventListener('input', updateTimeCorrected);
-    heart_rate.addEventListener('input', updateTimeCorrected);
     function updateTimeCorrected() {
-      const t = parseFloat(flow_time.value), hr = parseInt(heart_rate.value,10);
-      if (!isNaN(t)&&!isNaN(hr)) {
-        const c = t + 1.3*(hr-60),
-              cut = formData.age<65?325:340;
-        time_corrected_result.textContent = c.toFixed(1)+' мс точка отсечки '+cut+' мс';
-        formData.b1_time = t; formData.b1_hr = hr; formData.b1_time_corrected = c;
+      const t  = parseFloat(flow_time.value),
+            hr = parseInt(heart_rate.value, 10);
+      if (!isNaN(t) && !isNaN(hr)) {
+        const c = t + 1.3*(hr - 60),
+              cut = formData.age < 65 ? 325 : 340;
+        time_corrected_result.textContent = c.toFixed(1) + ' мс точка отсечения ' + cut + ' мс';
+        formData.b1_time = t;
+        formData.b1_hr   = hr;
+        formData.b1_time_corrected = c;
       }
     }
+    flow_time.addEventListener('input', updateTimeCorrected);
+    heart_rate.addEventListener('input', updateTimeCorrected);
 
-    // ===== Отправка =====
-    document.querySelectorAll('button.submit').forEach(btn => {
-      btn.addEventListener('click', async () => {
-        // проверки блока 1 (если нужно)
-        if (formData.block === '1') {
-          if (typeof formData.b1_ven_ratio === 'undefined') {
-            alert("Заполните IJV"); return;
-          }
-          if (typeof formData.b1_car_ratio === 'undefined') {
-            alert("Заполните CCA"); return;
-          }
-          if (typeof formData.b1_time_corrected === 'undefined') {
-            alert("Заполните Flow time"); return;
-          }
+    // подсчёт LUS
+    function calcLusScore() {
+      let sum = 0;
+      for (let i=1; i<=6; i++){
+        sum += parseInt(document.getElementById('lus_r'+i).value,10)||0;
+        sum += parseInt(document.getElementById('lus_l'+i).value,10)||0;
+      }
+      formData.lus_score = sum;
+      document.getElementById('lus_score').textContent = 'БАЛЛЫ ПО LUS – '+sum;
+    }
+    for (let i=1; i<=6; i++){
+      ['lus_r','lus_l'].forEach(p=>{
+        document.getElementById(p+i).addEventListener('change', calcLusScore);
+      });
+    }
+
+    // кнопки «Назад»
+    document.querySelectorAll('.back').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.getElementById('form'+btn.dataset.from).classList.add('hidden');
+        document.getElementById('step1').classList.remove('hidden');
+        clearInterval(timerInterval);
+        document.getElementById('timer').classList.add('hidden');
+      });
+    });
+
+    // кнопка «Далее»
+    document.getElementById('step1_next').addEventListener('click', ()=>{
+      formData.block      = document.getElementById('block_select').value;
+      formData.patient_id = document.getElementById('patient_id').value.trim();
+      formData.age        = parseInt(document.getElementById('patient_age').value, 10);
+
+      if (!formData.patient_id) { alert("Введите номер И/Б пациента"); return; }
+      if (isNaN(formData.age))   { alert("Введите возраст пациента");       return; }
+
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('form'+formData.block).classList.remove('hidden');
+      // стартуем таймер
+      startTime = Date.now();
+      document.getElementById('timer').classList.remove('hidden');
+      timerInterval = setInterval(()=>{
+        const sec = Math.floor((Date.now()-startTime)/1000),
+              m = String(Math.floor(sec/60)).padStart(2,'0'),
+              s = String(sec%60).padStart(2,'0');
+        document.getElementById('timer').textContent = `${m}:${s}`;
+      },1000);
+    });
+
+    // отправка
+    document.querySelectorAll('button.submit').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        if (formData.block==='1'){
+          if (typeof formData.b1_ven_ratio==='undefined'){ alert("IJV");return; }
+          if (typeof formData.b1_car_ratio==='undefined'){ alert("CCA");return; }
+          if (typeof formData.b1_time_corrected==='undefined'){ alert("Flow");return; }
         }
-
-        stopTimer();
+        clearInterval(timerInterval);
+        formData.total_time = Math.floor((Date.now()-startTime)/1000);
         formData.telegram_id = webApp.initDataUnsafe.user.id;
-
-        if (formData.block === '5') {
-          ['r_cons','r_pneumo','r_hydro'].forEach(s => {
-            formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-          });
-          ['l_cons','l_pneumo','l_hydro'].forEach(s => {
-            formData['lus_' + s] = document.getElementById('lus_' + s).checked;
-          });
+        if (formData.block==='5'){
+          ['r_cons','r_pneumo','r_hydro'].forEach(s=> formData['lus_'+s]=document.getElementById('lus_'+s).checked);
+          ['l_cons','l_pneumo','l_hydro'].forEach(s=> formData['lus_'+s]=document.getElementById('lus_'+s).checked);
           calcLusScore();
         }
-
-        const payload = encodeURIComponent(JSON.stringify(formData));
-        await fetch(`${WEBHOOK_URL}?data=${payload}`, { method: 'GET', mode: 'no-cors' });
+        await fetch(`${WEBHOOK_URL}?data=${encodeURIComponent(JSON.stringify(formData))}`, { method:'GET', mode:'no-cors' });
         alert(`✔️ Сохранено, время ${formData.total_time} сек.`);
         webApp.close();
       });
