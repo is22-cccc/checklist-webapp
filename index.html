@@ -448,6 +448,11 @@ document.querySelectorAll('#submit_button').forEach(btn =>
         return;
       }
     }
+    if (formData.block === '1') {
+  formData.b1_ven_error  = document.getElementById('ven_error').checked;
+  formData.b1_car_error  = document.getElementById('car_error').checked;
+  formData.b1_time_error = document.getElementById('time_error').checked;
+}
     // ===== Сбор флажков ошибок для блока 2 =====
 // В вашем submit-хендлере, где вы обрабатываете formData.block==='2', добавьте:
 if (formData.block === '2') {
@@ -485,6 +490,7 @@ if (formData.block === '2') {
       formData.lus_l_cons   = document.getElementById('lus_l_cons').checked;
       formData.lus_l_pneumo = document.getElementById('lus_l_pneumo').checked;
       formData.lus_l_hydro  = document.getElementById('lus_l_hydro').checked;
+      formData.lus_error    = document.getElementById('lus_error').checked; // ← ВАЖНО!
       calcLusScore();
     } else {
       // здесь можно оставить специфичные для блока 1 расчёты (если нужно)
