@@ -159,7 +159,33 @@
     <button type="button" class="secondary" id="step1_back">Назад</button>
     <button type="button" id="submit_button">Завершить</button>
   </div>  
+
+   <!-- Шаг 4: Блок 3 -->
+  <div id="form3" class="section hidden">
+    <h2>Блок 3: ЭХОКГ</h2>
+
+    <!-- VTI_ЛЖ -->
+    <h3>Вариабельность VTI на выносящем тракте ЛЖ при дыхании</h3>
+    <label for="b3_vtil_max">Max (мм):</label>
+    <input type="number" id="b3_vtil_max" step="0.1">
+    <label for="b3_vtil_min">Min (мм):</label>
+    <input type="number" id="b3_vtil_min" step="0.1">
+    <p id="b3_vtil_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b3_vtil_error"> Технические погрешности</label>
+
+     <!-- VTI_ПЖ -->
+    <h3>Вариабельность VTI на легочной артерии при дыхании</h3>
+    <label for="b3_vtip_max">Max (мм):</label>
+    <input type="number" id="b3_vtip_max" step="0.1">
+    <label for="b3_vtip_min">Min (мм):</label>
+    <input type="number" id="b3_vtip_min" step="0.1">
+    <p id="b3_vtip_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b3_vtip_error"> Технические погрешности</label>
     
+    <!-- Навигация -->
+    <button type="button" class="secondary" id="step1_back">Назад</button>
+    <button type="button" id="submit_button">Завершить</button>
+  </div>    
   <!-- Блок 5: УЗИ лёгких -->
   <div id="form5" class="section hidden">
     <h2>Блок 5: УЗИ лёгких</h2>
@@ -349,7 +375,19 @@ document.querySelectorAll('#submit_button').forEach(btn =>
         return;
       }
     }
-    
+    // ===== Сбор флажков ошибок для блока 2 =====
+// В вашем submit-хендлере, где вы обрабатываете formData.block==='2', добавьте:
+if (formData.block === '2') {
+  formData.b2_ven_error   = document.getElementById('b2_ven_error').checked;
+  formData.b2_venp_error  = document.getElementById('b2_venp_error').checked;
+  formData.b2_car_error   = document.getElementById('b2_car_error').checked;
+  formData.b2_time_error  = document.getElementById('b2_time_error').checked;
+  formData.b2_carp_error  = document.getElementById('b2_carp_error').checked;
+}
+    if (formData.block === '3') {
+  formData.b3_vtil_error = document.getElementById('b3_vtil_error').checked;
+  formData.b3_vtip_error = document.getElementById('b3_vtip_error').checked;
+}
     // Если дошли сюда — все поля заполнены, можно продолжить
     if (formData.block === '5') {
       // 1) Собираем значения зон
@@ -449,15 +487,35 @@ function updateB2CarpRatio() {
 document.getElementById('b2_carp_max').addEventListener('input', updateB2CarpRatio);
 document.getElementById('b2_carp_min').addEventListener('input', updateB2CarpRatio);
 
-// ===== Сбор флажков ошибок для блока 2 =====
-// В вашем submit-хендлере, где вы обрабатываете formData.block==='2', добавьте:
-if (formData.block === '2') {
-  formData.b2_ven_error   = document.getElementById('b2_ven_error').checked;
-  formData.b2_venp_error  = document.getElementById('b2_venp_error').checked;
-  formData.b2_car_error   = document.getElementById('b2_car_error').checked;
-  formData.b2_time_error  = document.getElementById('b2_time_error').checked;
-  formData.b2_carp_error  = document.getElementById('b2_carp_error').checked;
+
+    // ===== Block3 VTI ЛЖ =====
+function updateB3VtilRatio() {
+  const max = parseFloat(document.getElementById('b3_vtil_max').value);
+  const min = parseFloat(document.getElementById('b3_vtil_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b3_vtil_ratio_result')
+            .textContent = ratio.toFixed(1) + '% (VTI ЛЖ)';
+    formData.b3_vtil_ratio = ratio;
+  }
 }
+document.getElementById('b3_vtil_max').addEventListener('input', updateB3VtilRatio);
+document.getElementById('b3_vtil_min').addEventListener('input', updateB3VtilRatio);
+
+// ===== Block3 VTI ПЖ =====
+function updateB3VtipRatio() {
+  const max = parseFloat(document.getElementById('b3_vtip_max').value);
+  const min = parseFloat(document.getElementById('b3_vtip_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b3_vtip_ratio_result')
+            .textContent = ratio.toFixed(1) + '% (VTI ПЖ)';
+    formData.b3_vtip_ratio = ratio;
+  }
+}
+document.getElementById('b3_vtip_max').addEventListener('input', updateB3VtipRatio);
+document.getElementById('b3_vtip_min').addEventListener('input', updateB3VtipRatio);
+
   </script>
 </body>
 </html>
