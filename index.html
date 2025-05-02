@@ -186,6 +186,79 @@
     <button type="button" class="secondary" id="step1_back">Назад</button>
     <button type="button" id="submit_button">Завершить</button>
   </div>    
+
+  <!-- Шаг 5: Блок 4 -->
+  <div id="form4" class="section hidden">
+    <h2>Блок 4: Полный протокол</h2>
+
+     <!-- IJV -->
+    <h3>Вариабельность диаметра внутренней яремной вены при дыхании</h3>
+    <label for="b4_ven_max">Max (мм):</label>
+    <input type="number" id="b4_ven_max" step="0.1">
+    <label for="b4_ven_min">Min (мм):</label>
+    <input type="number" id="b4_ven_min" step="0.1">
+    <p id="b4_ven_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b4_ven_error"> Технические погрешности</label>
+
+    <!-- НПВ -->
+    <h3>Вариабельность диаметра нижней полой вены при дыхании</h3>
+    <label for="b4_venp_max">Max (мм):</label>
+    <input type="number" id="b4_venp_max" step="0.1">
+    <label for="b4_venp_min">Min (мм):</label>
+    <input type="number" id="b4_venp_min" step="0.1">
+    <p id="b4_venp_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b4_venp_error"> Технические погрешности</label>
+    
+    <!-- CCA -->
+    <h3>Вариабельность пиковой скорости в общей сонной артерии при дыхании</h3>
+    <label for="b4_car_max">Max (мм):</label>
+    <input type="number" id="b4_car_max" step="0.1">
+    <label for="b4_car_min">Min (мм):</label>
+    <input type="number" id="b4_car_min" step="0.1">
+    <p id="b4_car_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b4_car_error"> Технические погрешности</label>
+
+    <!-- Flow time -->
+    <h3>Корректированное время потока на общей сонной артерии</h3>
+    <label for="b4_flow_time">Время (мс):</label>
+    <input type="number" id="b4_flow_time" step="0.1">
+    <label for="b4_heart_rate">ЧСС:</label>
+    <input type="number" id="b4_heart_rate">
+    <p id="b4_time_corrected_result" class="result"></p>
+    <label><input type="checkbox" id="b4_time_error"> Технические погрешности</label>
+
+    <!-- PA -->
+    <h3>Вариабельность пиковой скорости на плечевой артерии при дыхании</h3>
+    <label for="b4_carp_max">Max (мм):</label>
+    <input type="number" id="b4_carp_max" step="0.1">
+    <label for="b4_carp_min">Min (мм):</label>
+    <input type="number" id="b4_carp_min" step="0.1">
+    <p id="b4_carp_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b4_carp_error"> Технические погрешности</label> 
+    
+    <!-- VTI_ЛЖ -->
+    <h3>Вариабельность VTI на выносящем тракте ЛЖ при дыхании</h3>
+    <label for="b4_vtil_max">Max (мм):</label>
+    <input type="number" id="b4_vtil_max" step="0.1">
+    <label for="b4_vtil_min">Min (мм):</label>
+    <input type="number" id="b4_vtil_min" step="0.1">
+    <p id="b4_vtil_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b4_vtil_error"> Технические погрешности</label>
+
+     <!-- VTI_ПЖ -->
+    <h3>Вариабельность VTI на легочной артерии при дыхании</h3>
+    <label for="b4_vtip_max">Max (мм):</label>
+    <input type="number" id="b4_vtip_max" step="0.1">
+    <label for="b4_vtip_min">Min (мм):</label>
+    <input type="number" id="b4_vtip_min" step="0.1">
+    <p id="b4_vtip_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b4_vtip_error"> Технические погрешности</label>
+    
+    <!-- Навигация -->
+    <button type="button" class="secondary" id="step1_back">Назад</button>
+    <button type="button" id="submit_button">Завершить</button>
+  </div>    
+  
   <!-- Блок 5: УЗИ лёгких -->
   <div id="form5" class="section hidden">
     <h2>Блок 5: УЗИ лёгких</h2>
@@ -388,6 +461,16 @@ if (formData.block === '2') {
   formData.b3_vtil_error = document.getElementById('b3_vtil_error').checked;
   formData.b3_vtip_error = document.getElementById('b3_vtip_error').checked;
 }
+
+    if (formData.block === '4') {
+  formData.b4_ven_error   = document.getElementById('b4_ven_error').checked;
+  formData.b4_venp_error  = document.getElementById('b4_venp_error').checked;
+  formData.b4_car_error   = document.getElementById('b4_car_error').checked;
+  formData.b4_time_error  = document.getElementById('b4_time_error').checked;
+  formData.b4_carp_error  = document.getElementById('b4_carp_error').checked;
+  formData.b4_vtil_error  = document.getElementById('b4_vtil_error').checked;
+  formData.b4_vtip_error  = document.getElementById('b4_vtip_error').checked;
+}
     // Если дошли сюда — все поля заполнены, можно продолжить
     if (formData.block === '5') {
       // 1) Собираем значения зон
@@ -516,6 +599,99 @@ function updateB3VtipRatio() {
 document.getElementById('b3_vtip_max').addEventListener('input', updateB3VtipRatio);
 document.getElementById('b3_vtip_min').addEventListener('input', updateB3VtipRatio);
 
+// ===== Block4 IJV =====
+function updateB4VenRatio() {
+  const max = parseFloat(document.getElementById('b4_ven_max').value);
+  const min = parseFloat(document.getElementById('b4_ven_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b4_ven_ratio_result').textContent = ratio.toFixed(1) + '% (IJV)';
+    formData.b4_ven_ratio = ratio;
+  }
+}
+document.getElementById('b4_ven_max').addEventListener('input', updateB4VenRatio);
+document.getElementById('b4_ven_min').addEventListener('input', updateB4VenRatio);
+
+// ===== Block4 IVC =====
+function updateB4IvcRatio() {
+  const max = parseFloat(document.getElementById('b4_venp_max').value);
+  const min = parseFloat(document.getElementById('b4_venp_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b4_venp_ratio_result').textContent = ratio.toFixed(1) + '% (IVC)';
+    formData.b4_venp_ratio = ratio;
+  }
+}
+document.getElementById('b4_venp_max').addEventListener('input', updateB4IvcRatio);
+document.getElementById('b4_venp_min').addEventListener('input', updateB4IvcRatio);
+
+// ===== Block4 CCA =====
+function updateB4CarRatio() {
+  const max = parseFloat(document.getElementById('b4_car_max').value);
+  const min = parseFloat(document.getElementById('b4_car_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b4_car_ratio_result').textContent = ratio.toFixed(1) + '% (CCA)';
+    formData.b4_car_ratio = ratio;
+  }
+}
+document.getElementById('b4_car_max').addEventListener('input', updateB4CarRatio);
+document.getElementById('b4_car_min').addEventListener('input', updateB4CarRatio);
+
+// ===== Block4 Flow time =====
+function updateB4TimeCorrected() {
+  const time = parseFloat(document.getElementById('b4_flow_time').value);
+  const hr   = parseInt(document.getElementById('b4_heart_rate').value, 10);
+  if (!isNaN(time) && !isNaN(hr)) {
+    const corrected = time + 1.3 * (hr - 60);
+    const threshold = formData.age < 65 ? 325 : 340;
+    document.getElementById('b4_time_corrected_result')
+            .textContent = corrected.toFixed(1) + ' мс (порог ' + threshold + ' мс)';
+    formData.b4_time_corrected = corrected;
+  }
+}
+document.getElementById('b4_flow_time').addEventListener('input', updateB4TimeCorrected);
+document.getElementById('b4_heart_rate').addEventListener('input', updateB4TimeCorrected);
+
+// ===== Block4 PA =====
+function updateB4CarpRatio() {
+  const max = parseFloat(document.getElementById('b4_carp_max').value);
+  const min = parseFloat(document.getElementById('b4_carp_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b4_carp_ratio_result').textContent = ratio.toFixed(1) + '% (PA)';
+    formData.b4_carp_ratio = ratio;
+  }
+}
+document.getElementById('b4_carp_max').addEventListener('input', updateB4CarpRatio);
+document.getElementById('b4_carp_min').addEventListener('input', updateB4CarpRatio);
+
+// ===== Block4 VTI ЛЖ =====
+function updateB4VtilRatio() {
+  const max = parseFloat(document.getElementById('b4_vtil_max').value);
+  const min = parseFloat(document.getElementById('b4_vtil_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b4_vtil_ratio_result').textContent = ratio.toFixed(1) + '% (VTI ЛЖ)';
+    formData.b4_vtil_ratio = ratio;
+  }
+}
+document.getElementById('b4_vtil_max').addEventListener('input', updateB4VtilRatio);
+document.getElementById('b4_vtil_min').addEventListener('input', updateB4VtilRatio);
+
+// ===== Block4 VTI ПЖ =====
+function updateB4VtipRatio() {
+  const max = parseFloat(document.getElementById('b4_vtip_max').value);
+  const min = parseFloat(document.getElementById('b4_vtip_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b4_vtip_ratio_result').textContent = ratio.toFixed(1) + '% (VTI ПЖ)';
+    formData.b4_vtip_ratio = ratio;
+  }
+}
+document.getElementById('b4_vtip_max').addEventListener('input', updateB4VtipRatio);
+document.getElementById('b4_vtip_min').addEventListener('input', updateB4VtipRatio);
+    
   </script>
 </body>
 </html>
