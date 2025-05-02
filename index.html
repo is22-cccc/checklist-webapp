@@ -112,48 +112,48 @@
 
     <!-- IJV -->
     <h3>Вариабельность диаметра внутренней яремной вены при дыхании</h3>
-    <label for="ven_max">Max (мм):</label>
-    <input type="number" id="ven_max" step="0.1">
-    <label for="ven_min">Min (мм):</label>
-    <input type="number" id="ven_min" step="0.1">
-    <p id="ven_ratio_result" class="result"></p>
-    <label><input type="checkbox" id="ven_error"> Технические погрешности</label>
+    <label for="b2_ven_max">Max (мм):</label>
+    <input type="number" id="b2_ven_max" step="0.1">
+    <label for="b2_ven_min">Min (мм):</label>
+    <input type="number" id="b2_ven_min" step="0.1">
+    <p id="b2_ven_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b2_ven_error"> Технические погрешности</label>
 
     <!-- НПВ -->
     <h3>Вариабельность диаметра нижней полой вены при дыхании</h3>
-    <label for="venp_max">Max (мм):</label>
-    <input type="number" id="venp_max" step="0.1">
-    <label for="venp_min">Min (мм):</label>
-    <input type="number" id="venp_min" step="0.1">
-    <p id="venp_ratio_result" class="result"></p>
-    <label><input type="checkbox" id="venp_error"> Технические погрешности</label>
+    <label for="b2_venp_max">Max (мм):</label>
+    <input type="number" id="b2_venp_max" step="0.1">
+    <label for="b2_venp_min">Min (мм):</label>
+    <input type="number" id="b2_venp_min" step="0.1">
+    <p id="b2_venp_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b2_venp_error"> Технические погрешности</label>
     
     <!-- CCA -->
     <h3>Вариабельность пиковой скорости в общей сонной артерии при дыхании</h3>
-    <label for="car_max">Max (мм):</label>
-    <input type="number" id="car_max" step="0.1">
-    <label for="car_min">Min (мм):</label>
-    <input type="number" id="car_min" step="0.1">
-    <p id="car_ratio_result" class="result"></p>
-    <label><input type="checkbox" id="car_error"> Технические погрешности</label>
+    <label for="b2_car_max">Max (мм):</label>
+    <input type="number" id="b2_car_max" step="0.1">
+    <label for="b2_car_min">Min (мм):</label>
+    <input type="number" id="b2_car_min" step="0.1">
+    <p id="b2_car_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b2_car_error"> Технические погрешности</label>
 
     <!-- Flow time -->
     <h3>Корректированное время потока на общей сонной артерии</h3>
-    <label for="flow_time">Время (мс):</label>
-    <input type="number" id="flow_time" step="0.1">
-    <label for="heart_rate">ЧСС:</label>
-    <input type="number" id="heart_rate">
-    <p id="time_corrected_result" class="result"></p>
-    <label><input type="checkbox" id="time_error"> Технические погрешности</label>
+    <label for="b2_flow_time">Время (мс):</label>
+    <input type="number" id="b2_flow_time" step="0.1">
+    <label for="b2_heart_rate">ЧСС:</label>
+    <input type="number" id="b2_heart_rate">
+    <p id="b2_time_corrected_result" class="result"></p>
+    <label><input type="checkbox" id="b2_time_error"> Технические погрешности</label>
 
     <!-- PA -->
     <h3>Вариабельность пиковой скорости на плечевой артерии при дыхании</h3>
-    <label for="carp_max">Max (мм):</label>
-    <input type="number" id="carp_max" step="0.1">
-    <label for="carp_min">Min (мм):</label>
-    <input type="number" id="car_min" step="0.1">
-    <p id="carp_ratio_result" class="result"></p>
-    <label><input type="checkbox" id="carp_error"> Технические погрешности</label> 
+    <label for="b2_carp_max">Max (мм):</label>
+    <input type="number" id="b2_carp_max" step="0.1">
+    <label for="b2_carp_min">Min (мм):</label>
+    <input type="number" id="b2_carp_min" step="0.1">
+    <p id="b2_carp_ratio_result" class="result"></p>
+    <label><input type="checkbox" id="b2_carp_error"> Технические погрешности</label> 
     
     <!-- Навигация -->
     <button type="button" class="secondary" id="step1_back">Назад</button>
@@ -377,7 +377,87 @@ document.querySelectorAll('#submit_button').forEach(btn =>
     webApp.close();
   })
 );
+// ===== Block2 IJV =====
+function updateB2VenRatio() {
+  const max = parseFloat(document.getElementById('b2_ven_max').value);
+  const min = parseFloat(document.getElementById('b2_ven_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b2_ven_ratio_result')
+            .textContent = ratio.toFixed(1) + '% (IJV)';
+    formData.b2_ven_ratio = ratio;
+  }
+}
+document.getElementById('b2_ven_max').addEventListener('input', updateB2VenRatio);
+document.getElementById('b2_ven_min').addEventListener('input', updateB2VenRatio);
 
+// ===== Block2 IVC (НПВ) =====
+function updateB2IvpRatio() {
+  const max = parseFloat(document.getElementById('b2_venp_max').value);
+  const min = parseFloat(document.getElementById('b2_venp_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b2_venp_ratio_result')
+            .textContent = ratio.toFixed(1) + '% (НПВ)';
+    formData.b2_venp_ratio = ratio;
+  }
+}
+document.getElementById('b2_venp_max').addEventListener('input', updateB2IvpRatio);
+document.getElementById('b2_venp_min').addEventListener('input', updateB2IvpRatio);
+
+// ===== Block2 CCA =====
+function updateB2CarRatio() {
+  const max = parseFloat(document.getElementById('b2_car_max').value);
+  const min = parseFloat(document.getElementById('b2_car_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b2_car_ratio_result')
+            .textContent = ratio.toFixed(1) + '% (CCA)';
+    formData.b2_car_ratio = ratio;
+  }
+}
+document.getElementById('b2_car_max').addEventListener('input', updateB2CarRatio);
+document.getElementById('b2_car_min').addEventListener('input', updateB2CarRatio);
+
+// ===== Block2 Flow time =====
+function updateB2TimeCorrected() {
+  const time = parseFloat(document.getElementById('b2_flow_time').value);
+  const hr   = parseInt(document.getElementById('b2_heart_rate').value, 10);
+  if (!isNaN(time) && !isNaN(hr)) {
+    const corrected = time + 1.3 * (hr - 60);
+    const threshold = formData.age < 65 ? 325 : 340;
+    document.getElementById('b2_time_corrected_result')
+            .textContent = corrected.toFixed(1) + 
+                           ' мс (порог ' + threshold + ' мс)';
+    formData.b2_time_corrected = corrected;
+  }
+}
+document.getElementById('b2_flow_time').addEventListener('input', updateB2TimeCorrected);
+document.getElementById('b2_heart_rate').addEventListener('input', updateB2TimeCorrected);
+
+// ===== Block2 PA =====
+function updateB2CarpRatio() {
+  const max = parseFloat(document.getElementById('b2_carp_max').value);
+  const min = parseFloat(document.getElementById('b2_carp_min').value);
+  if (!isNaN(max) && !isNaN(min)) {
+    const ratio = (max - min) / ((max + min) / 2) * 100;
+    document.getElementById('b2_carp_ratio_result')
+            .textContent = ratio.toFixed(1) + '% (PA)';
+    formData.b2_carp_ratio = ratio;
+  }
+}
+document.getElementById('b2_carp_max').addEventListener('input', updateB2CarpRatio);
+document.getElementById('b2_carp_min').addEventListener('input', updateB2CarpRatio);
+
+// ===== Сбор флажков ошибок для блока 2 =====
+// В вашем submit-хендлере, где вы обрабатываете formData.block==='2', добавьте:
+if (formData.block === '2') {
+  formData.b2_ven_error   = document.getElementById('b2_ven_error').checked;
+  formData.b2_venp_error  = document.getElementById('b2_venp_error').checked;
+  formData.b2_car_error   = document.getElementById('b2_car_error').checked;
+  formData.b2_time_error  = document.getElementById('b2_time_error').checked;
+  formData.b2_carp_error  = document.getElementById('b2_carp_error').checked;
+}
   </script>
 </body>
 </html>
